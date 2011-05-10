@@ -14,24 +14,46 @@ class WimshBwManagerFeba : public WimshBwManager {
 	
 	typedef std::vector< std::bitset<MAX_SLOTS> > Bitmap;
 
-
+protected:
 	struct NeighbourDesc {
-		
+	
+		/* Número de bytes requisitados ao vizinho. */
+
 		unsigned int req_in_;
+
+		/* Concedidos. */
 
 		unsigned int gnt_in_;
 
+		/* Confirmados. */
+
 		unsigned int cnf_in_;
+
+		/* Compensação. */
 
 		unsigned int lag_in_;
 
+		
 		unsigned int req_out_;
 
 		unsigned int gnt_out_;
 
 		unsigned int cnf_out_;
+		
+		unsigned int lag_out_;
 
-	}
+		NeighbourDesc() {
+			req_in_=0;
+			req_out_=0;
+			gnt_in_=0;
+			gnt_out_=0;
+			lag_in_=0;
+			lag_out_=0;
+		}
+
+		std::vector<NeighbourDesc> neigh_;
+
+	};
 
 
 
