@@ -33,6 +33,8 @@ protected:
 
 		unsigned int lag_in_;
 
+		unsigned int backlog_;
+
 		
 		unsigned int req_out_;
 
@@ -54,6 +56,15 @@ protected:
 		std::vector<NeighbourDesc> neigh_;
 
 	};
+
+	std::vector<vector<Bitmap>> neigh_tx_unavl_;
+
+
+	std::vector<Bitmap>  self_tx_unavl_;
+	std::vector<Bitmap>  self_rx_unavl_;
+
+
+	Bitmap busy_;
 
 
 

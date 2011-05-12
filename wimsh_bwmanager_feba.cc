@@ -14,15 +14,58 @@ int WimshBwManagerFeba::command (int argc, const char*const* argv) {
 
 
 void WimshBwManagerFeba::recvMshDsch (WimshMshDsch* dsch){
+
+
 }
 
 void WimshBwManagerFeba::schedule (WimshMshDsch* dsch){
 }
 
 void WimshBwManagerFeba::initialize (){
-	    for ( unsigned int i = 0 ; i < mac_->nneighs() ; i++ ) {
-			cout << "Estou iniciando" <<  mac_->alpha (i) << endl;
+	
+	int nneighbors = mac_->nneighs();
+	neigh_.resize(nneighbors);
+
+	neigh_tx_unavl_.resize(nneighbors);
+
+	busy_.resize(HORIZON);
+
+	// Para cada vizinho
+	for(int ngh_index=0; ngh_index < nneighbors; ngh_index++)
+	{
+		neigh_tx_unavl_[ngh_index].resize(mac_->nchannels());
+		//Para cada canal
+		for(int ch_index=0; ch_index < mac_->nchannels(); ch_index++)
+		{
+			neigh_tx_unavl_[ngh_index][ch_index].resize(HORIZON);
+			self_rx_unavl_[ch_index].resize(HORIZON);
+			self_tx_unavl_[ch_index].resize(HORIZON);
+
+			// Para cada frame
+			for(int fr_index; fr_index < HORIZON; fr_index++)
+			{
+				neigh_tx_unavl_[ngh_index][ch_index][fr_index].reset();
+				self_rx_unavl_[ch_index][fr_index].reset();
+				self_tx_unavl_[ch_index][fr_index].reset();
+			}
 		}
+	}
+
+	//Para cada canal
+	for(int ch_index=0; ch_index < mac_->nchannels(); ch_index++)
+	{
+		self_rx_unavl_[ch_index].resize(HORIZON);
+		self_tx_unavl_[ch_index].resize(HORIZON);
+
+		// Para cada frame
+		for(int fr_index; fr_index < HORIZON; fr_index++)
+		{
+			self_rx_unavl_[ch_index][fr_index].reset();
+			self_tx_unavl_[ch_index][fr_index].reset();
+		}
+	}
+
+
 }
 	
 void WimshBwManagerFeba::backlog (WimaxNodeId src, WimaxNodeId dst, unsigned char prio, WimaxNodeId nexthop, unsigned int bytes){
