@@ -12,7 +12,7 @@
 
 class WimshBwManagerFeba : public WimshBwManager {
 	
-	typedef std::vector< std::bitset<MAX_SLOTS> > Bitmap;
+	typedef std::vector< std::bitset< MAX_SLOTS > > Bitmap;
 
 protected:
 	struct NeighbourDesc {
@@ -53,15 +53,15 @@ protected:
 			lag_out_=0;
 		}
 
-		std::vector<NeighbourDesc> neigh_;
 
 	};
 
-	std::vector<vector<Bitmap>> neigh_tx_unavl_;
+	std::vector< NeighbourDesc > neigh_;
+	std::vector< vector< Bitmap > > neigh_tx_unavl_;
 
 
-	std::vector<Bitmap>  self_tx_unavl_;
-	std::vector<Bitmap>  self_rx_unavl_;
+	std::vector< Bitmap >  self_tx_unavl_;
+	std::vector< Bitmap >  self_rx_unavl_;
 
 
 	Bitmap busy_;
@@ -96,7 +96,11 @@ public:
 	void received (WimaxNodeId src, WimaxNodeId dst, unsigned char prio, WimaxNodeId source, unsigned int bytes) {
 		wm_.flow (src, dst, prio, source, wimax::IN); 
 	}
-			
+private:
+	void recvReq(WimshMshDsch* dsch);
+	void recvGnt(WimshMshDsch* dsch);
+	void recvAvl(WimshMshDsch* dsch);
+	void realPersistence(unsigned int frame_start, WimshMshDsch::Persistence frame_range, unsigned int &actual_frame_start, unsigned int &actual_frame_range);
 };
 
 #endif
