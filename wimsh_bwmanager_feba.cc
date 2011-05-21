@@ -73,18 +73,18 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 			// É uma confirmação
 			if ( it->fromRequester_ )
 			{
-				neigh_[ngh_index].cnf_in_ += frame_range * mac_->slots2bytes(ngh_index, it->level_, false);
+				neigh_[ngh_index].cnf_in_ += frame_range * mac_->slots2bytes(ngh_index, it->range_, false);
 			}
 			else // É uma concessão
 			{
 				// O grant é transformado em uma confirmação e guardada.
 				// Alteramos o destino desta confirmação agora proque temos esta informação na mensagem.
-				it->nodeId = dsch->src();
+				it->nodeId_ = dsch->src();
 				it->fromRequester_ = true;
 
 				pending_confirmations.insert(*it);
 
-				neigh_[ngh_index].gnt_out_+= frame_range * mac_->slots2bytes(ngh_index, it->level_, false);
+				neigh_[ngh_index].gnt_out_+= frame_range * mac_->slots2bytes(ngh_index, it->range_, false);
 			}
 		}
 		else  // Grant destinado a outro nodo
@@ -102,7 +102,7 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 
 				// O vizinho que confirmou não poderá transmitir em nenhum canal.
 				// Nós não poderemos escutar neste canal
-				for(int ch_index = 0; ch_index < mac_->nchannels(); ch_index++)
+				for(unsigned int ch_index = 0; ch_index < mac_->nchannels(); ch_index++)
 				{
 					setSlots(neigh_tx_unavl_[ngh_index][ch_index],frame_start,frame_range,it->start_,it->range_,true);
 				}
@@ -146,7 +146,7 @@ void WimshBwManagerFeba::initialize (){
 	{
 		neigh_tx_unavl_[ngh_index].resize(mac_->nchannels());
 		//Para cada canal
-		for(int ch_index=0; ch_index < mac_->nchannels(); ch_index++)
+		for(unsigned int ch_index=0; ch_index < mac_->nchannels(); ch_index++)
 		{
 			neigh_tx_unavl_[ngh_index][ch_index].resize(HORIZON);
 
@@ -161,7 +161,7 @@ void WimshBwManagerFeba::initialize (){
 	self_rx_unavl_.resize(mac_->nchannels());
 	self_tx_unavl_.resize(mac_->nchannels());
 	//Para cada canal
-	for( int ch_index=0; ch_index < mac_->nchannels(); ch_index++)
+	for(unsigned int ch_index=0; ch_index < mac_->nchannels(); ch_index++)
 	{
 		self_rx_unavl_[ch_index].resize(HORIZON);
 		self_tx_unavl_[ch_index].resize(HORIZON);
