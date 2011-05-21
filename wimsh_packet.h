@@ -16,8 +16,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA, USA
  */
-
-#define UINT_MAX 4294967295U
+#ifndef UINT_MAX
+	#define UINT_MAX 4294967295U
+#endif
 #ifndef __NS2_WIMSH_PACKET_H
 #define __NS2_WIMSH_PACKET_H
 

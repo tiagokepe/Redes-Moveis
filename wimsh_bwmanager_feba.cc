@@ -1,4 +1,13 @@
 #include <wimsh_bwmanager_feba.h>
+
+
+#include <wimsh_mac.h>
+#include <wimsh_topology.h>
+#include <wimsh_packet.h>
+
+#include <random.h>
+#include <stat.h>
+
 #include <iostream>
 using namespace std;
 
@@ -53,21 +62,18 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 		// Duração do frame
 		unsigned int frame_range;
 		unsigned int frame_start;
-
+		
 		realPersistence(it->frame_,it->persistence_,frame_start,frame_range);
-
-
+		
 		// Grant destinado a este nodo.
 		if(  it->nodeId_ == mac_->nodeId() )
 		{
 			// É uma confirmação
 			if ( it->fromRequester_ )
 			{
-
 			}
 			else // É uma concessão
 			{
-
 			}
 		}
 		else  // Grant destinado a outro nodo
@@ -83,7 +89,6 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 				// Devemos ver se não é feita para outro vizinho nosso.
 				// Neste caso já teriamos cuidado de seu grant.
 
-
 				// O vizinho que confirmou não poderá transmitir em nenhum canal.
 				// Nós não poderemos escutar neste canal
 				unsigned int ngh_index = it->nodeId_;
@@ -93,7 +98,7 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 				}
 				setSlots(self_rx_unavl_,frame_start,frame_range,it->start_,it->range_,true);
 			}
-
+		}
 	}
 }
 
@@ -173,9 +178,9 @@ void WimshBwManagerFeba::sent (WimaxNodeId nexthop, unsigned int bytes){
 void WimshBwManagerFeba::realPersistence(unsigned int frame_start, WimshMshDsch::Persistence frame_range, unsigned int &actual_frame_start, unsigned int &actual_frame_range){
 	actual_frame_range = WimshMshDsch::pers2frames(frame_range);
 
-	range-= ( frame_start > mac_->frame() )? 0 : mac_->frame() - frame_start  ;
+	actual_frame_range -= ( frame_start > mac_->frame() )? 0 : mac_->frame() - frame_start  ;
 
-	if ( range < 0  ) range = 0;
+	if ( actual_frame_range < 0  ) actual_frame_range = 0;
 
 	actual_frame_start = ( frame_start >= mac_->frame() )? frame_start : mac_->frame();
 }
