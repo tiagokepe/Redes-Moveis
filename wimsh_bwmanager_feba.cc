@@ -18,7 +18,6 @@ void WimshBwManagerFeba::recvMshDsch (WimshMshDsch* dsch){
 	recvReq(dsch);
 	recvGnt(dsch);
 	recvAvl(dsch);
-
 }
 
 
@@ -50,6 +49,9 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 
 	for( it = gnt.begin(); it != gnt.end(); it++ )
 	{
+		//Indice deste vizinho
+		unsigned int ngh_index = it->nodeId_;
+
 		// Duração do frame
 		unsigned int frame_range;
 		unsigned int frame_start;
@@ -64,10 +66,19 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 			if ( it->fromRequester_ )
 			{
 
+
+				neigh_[ngh_index].cnf_in_ += frame_range * mac_->slots2bytes(ngh_index, it->level_, false);
 			}
 			else // É uma concessão
 			{
+				// O grant é transformado em uma confirmação e guardada.
+				// Alteramos o destino desta confirmação agora proque temos esta informação na mensagem.
+				it->nodeId = dsch->src();
+				it->fromRequester_ = true;
 
+				pending_confirmations.insert(*it);
+
+				neigh_[ngh_index].gnt_out_+= frame_range * mac_->slots2bytes(ngh_index, it->level_, false);
 			}
 		}
 		else  // Grant destinado a outro nodo
@@ -86,7 +97,6 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 
 				// O vizinho que confirmou não poderá transmitir em nenhum canal.
 				// Nós não poderemos escutar neste canal
-				unsigned int ngh_index = it->nodeId_;
 				for(int ch_index = 0; ch_index < mac_->nchannels(); ch_index++)
 				{
 					setSlots(neigh_tx_unavl_[ngh_index][ch_index],frame_start,frame_range,it->start_,it->range_,true);

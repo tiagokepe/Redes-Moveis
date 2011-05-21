@@ -55,16 +55,24 @@ protected:
 
 
 	};
-
+	// Descritor geral de vizinhos.
 	std::vector< NeighbourDesc > neigh_;
+
+	//Mapa de indisponibilidades de transmissão para cada vizinho
 	std::vector< vector< Bitmap > > neigh_tx_unavl_;
 
-
+	// Mapa de indisponibilidades deste nodo:
+	// para transmissão:
 	std::vector< Bitmap >  self_tx_unavl_;
+	// para escuta:
 	std::vector< Bitmap >  self_rx_unavl_;
 
 
 	Bitmap busy_;
+
+
+	// Confirmações pendentes
+	CircularList< WimshMshDsch::GntIE > pending_confirmations;
 
 
 
