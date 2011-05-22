@@ -73,7 +73,14 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 			// É uma confirmação
 			if ( it->fromRequester_ )
 			{
+				// Incrementamos o número de bytes de entrada confirmados.
 				neigh_[ngh_index].cnf_in_ += frame_range * mac_->slots2bytes(ngh_index, it->range_, false);
+
+				// Devemos escutar neste canal
+
+				setSlots(channel_,frame_start,frame_range,it->start_,it->range_,it->channel_);
+
+
 			}
 			else // É uma concessão
 			{
@@ -85,6 +92,10 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 				pending_confirmations.insert(*it);
 
 				neigh_[ngh_index].gnt_out_+= frame_range * mac_->slots2bytes(ngh_index, it->range_, false);
+
+				// Slots não confirmados se tornam indisponíveis
+
+				setSlots(unconfirmedSlots_,frame_start,frame_range,it->start_,it->range_,true);
 			}
 		}
 		else  // Grant destinado a outro nodo
@@ -92,21 +103,53 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 			// Concessão
 			if ( !(it->fromRequester_)   )
 			{
-				// Não podemos transmitir nos slots concedidos
+				// Se o destinatário deste grant é nosso vizinho, ele não poderá transmitir
+				// durante estes slots de tempo em nenhum canal. Sem grants a ele.
+				if (  mac_->topology()->neighbors(it->nodeId_,mac_->nodeId()) )
+				{
+					for(unsigned int ch_index; ch_index < mac_->nchannels();ch_index++)
+					{
+						setSlots(neigh_tx_unavl_[ch_index],frame_start,frame_range,it->start_,it->range_,true);
+					}
+				}
+
+				// Não poderemos dar grants a nenhum outro vizinho do concessor neste canal.
+				std::vector< WimaxNodeId > mutual_neighbors;
+				mac_->topology()->neighbors(dsch->src(),mutual_neighbors);
+				std::vector< WimaxNodeId >::iterator nid_it;
+				for(nid_it = mutual_neighbors.begin(); nid_it != mutual_neighbors.end();nid_it++)
+				{
+					// Se somos vizinhos
+					if( mac_->topology()->neighbors(mac_->nodeId(),*nid_it) )
+					{
+						int mutual_nghindex = mac_->neigh2ndx(*nid_it);
+
+						setSlots(neigh_tx_unavl_[mutual_nghindex][it->channel_],frame_start,frame_range,it->start_,it->range_,true);
+					}
+				}
+
+				// Não podemos transmitir nos slots concedidos. Não confirmaremos nenhum grant neste canal.
 				setSlots(self_tx_unavl_[it->channel_], frame_start, frame_range, it->start_, it->range_, true );
+
+				// Criaremos um aviso de indisponibilidade:
+				WimshMshDsch::AvlIE avl;
+
+				avl = createAvl(*it,WimshMshDsch::RX_ONLY);
+				availabilities_.insert(avl);
 			}
 			else if ( mac_->topology()->neighbors(it->nodeId_,mac_->nodeId()) ) // Confirmação
 			{
-				// Devemos ver se não é feita para outro vizinho nosso.
+				// O destinatário desta confirmação não pode ser nosso vizinho.
 				// Neste caso já teriamos cuidado de seu grant.
 
 				// O vizinho que confirmou não poderá transmitir em nenhum canal.
-				// Nós não poderemos escutar neste canal
 				for(unsigned int ch_index = 0; ch_index < mac_->nchannels(); ch_index++)
 				{
 					setSlots(neigh_tx_unavl_[ngh_index][ch_index],frame_start,frame_range,it->start_,it->range_,true);
 				}
-				setSlots(self_rx_unavl_,frame_start,frame_range,it->start_,it->range_,true);
+
+				// Nós não poderemos escutar neste canal
+				setSlots(self_rx_unavl_[it->channel_],frame_start,frame_range,it->start_,it->range_,true);
 			}
 		}
 	}
@@ -118,9 +161,22 @@ void WimshBwManagerFeba::recvAvl(WimshMshDsch* dsch){
 
 	std::list< WimshMshDsch::AvlIE >::iterator it;
 
+	// Índice do meu vizinho.
+	int ngh_index;
 
+	// Dados atualizados do meu frame
+	unsigned int frame_start;
+	unsigned int frame_range;
+
+	// Atualizamos nossa estrutura de dados de acordo com as disponibilidades recebidas.
 	for( it = avl.begin(); it != avl.end(); it++ )
 	{
+		if ( ( it->direction_ == WimshMshDsch::RX_ONLY) || (it->direction_ == WimshMshDsch::UNAVAILABLE ) )
+		{
+			ngh_index = mac_->neigh2ndx(dsch->src());
+			realPersistence(it->frame_,it->persistence_,frame_start,frame_range);
+			setSlots(neigh_tx_unavl_[ngh_index][it->channel_],frame_start,frame_range,it->start_,it->range_,true);
+		}
 
 	}
 }
@@ -136,10 +192,14 @@ void WimshBwManagerFeba::initialize (){
 	neigh_tx_unavl_.resize(nneighbors);
 
 	busy_.resize(HORIZON);
+	unconfirmedSlots_.resize(HORIZON);
+
 	for(int fr_index = 0; fr_index < HORIZON; fr_index++)
 	{
 		busy_[fr_index].reset();
+		unconfirmedSlots_[fr_index].reset();
 	}
+
 
 	// Para cada vizinho
 	for(int ngh_index=0; ngh_index < nneighbors; ngh_index++)
@@ -194,3 +254,17 @@ void WimshBwManagerFeba::realPersistence(unsigned int frame_start, WimshMshDsch:
 
 	actual_frame_start = ( frame_start >= mac_->frame() )? frame_start : mac_->frame();
 }
+
+WimshMshDsch::AvlIE WimshBwManagerFeba::createAvl(WimshMshDsch::GntIE gnt, WimshMshDsch::Direction dir) {
+	WimshMshDsch::AvlIE avl;
+
+	avl.channel_ = gnt.channel_;
+	avl.frame_ = gnt.frame_;
+	avl.persistence_ = gnt.persistence_;
+	avl.start_ = gnt.start_;
+	avl.range_ = gnt.range_;
+	avl.direction_ = dir;
+
+	return avl;
+}
+

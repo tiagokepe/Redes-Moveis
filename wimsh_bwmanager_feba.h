@@ -58,11 +58,11 @@ protected:
 	// Descritor geral de vizinhos.
 	std::vector< NeighbourDesc > neigh_;
 
-	//Mapa de indisponibilidades de transmissão para cada vizinho
+	//Mapa de indisponibilidades de transmissão para cada vizinho, usado para conceder banda:
 	std::vector< vector< Bitmap > > neigh_tx_unavl_;
 
 	// Mapa de indisponibilidades deste nodo:
-	// para transmissão:
+	// para transmissão, usado para confirmar banda:
 	std::vector< Bitmap >  self_tx_unavl_;
 	// para escuta:
 	std::vector< Bitmap >  self_rx_unavl_;
@@ -73,6 +73,9 @@ protected:
 
 	// Confirmações pendentes
 	CircularList< WimshMshDsch::GntIE > pending_confirmations;
+	CircularList< WimshMshDsch::AvlIE > availabilities_;
+
+	Bitmap unconfirmedSlots_;
 
 
 
@@ -109,6 +112,7 @@ private:
 	void recvGnt(WimshMshDsch* dsch);
 	void recvAvl(WimshMshDsch* dsch);
 	void realPersistence(unsigned int frame_start, WimshMshDsch::Persistence frame_range, unsigned int &actual_frame_start, unsigned int &actual_frame_range);
+	WimshMshDsch::AvlIE createAvl(WimshMshDsch::GntIE gnt,WimshMshDsch::Direction dir);
 };
 
 #endif
