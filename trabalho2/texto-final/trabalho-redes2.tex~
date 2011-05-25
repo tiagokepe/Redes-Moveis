@@ -57,7 +57,8 @@
    \item \textbf{Violação de privacidade}: Feita através da captura de mensagens provenientes da comunicação de outros veículos;
    \item \textbf{Falsificação}: Um atacante pode forjar mensagens sobre avisos de perigo. Elas podem contaminar rapidamente uma porção da rede;
    \item \textbf{Corrupção de mensagens em trânsito}: Um nodo desta rede pode intencionalmente modificar ou apagar mensagens  entre comunicações de outros nodos;
-   \item \textbf{Corrupção de informação a bordo}: O atacante pode modificar informação específica do veículo ou do motorista, tais como velocidade ou localização;
+   \item \textbf{Corrupção de informação a bordo}: O atacante pode modificar informação específica do veículo ou do m
+   
   \end{itemize}
 
 

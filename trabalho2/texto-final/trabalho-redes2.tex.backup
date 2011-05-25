@@ -52,12 +52,7 @@
   
   Uma rede vulnerável pode sofrer ataques em várias das suas camadas, aqui estão explicados alguns dos ataques mais comums:
   \begin{itemize}
-   \item \textbf{Interferência}: O atacante intencionalmente gera transmissões que interferem a recepção de transmissões autênticas;
-   \item \textbf{Representação}: Neste ataque um nodo se mascara como uma outra instãncia da rede. Pode ser como um veículo de emergência, fazendo com que outros abram caminho, ele também pode se passar por uma RSU;
-   \item \textbf{Violação de privacidade}: Feita através da captura de mensagens provenientes da comunicação de outros veículos;
-   \item \textbf{Falsificação}: Um atacante pode forjar mensagens sobre avisos de perigo. Elas podem contaminar rapidamente uma porção da rede;
-   \item \textbf{Corrupção de mensagens em trânsito}: Um nodo desta rede pode intencionalmente modificar ou apagar mensagens  entre comunicações de outros nodos;
-   \item \textbf{Corrupção de informação a bordo}: O atacante pode modificar informação específica do veículo ou do motorista, tais como velocidade ou localização;
+   \item \textbf{Interferência}: O atacante intencionalmente gera transmissões que interferem a recepção de 
   \end{itemize}
 
 

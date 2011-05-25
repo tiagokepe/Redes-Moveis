@@ -1,8 +1,8 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2011.5.25)  25 MAY 2011 16:34
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2011.5.25)  25 MAY 2011 18:15
 entering extended mode
  %&-line parsing enabled.
-**sbc-template.tex
-(./sbc-template.tex
+**trabalho-redes2.tex
+(./trabalho-redes2.tex
 LaTeX2e <2005/12/01>
 Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
 yphenation, arabic, basque, bulgarian, coptic, welsh, czech, slovak, german, ng
@@ -102,22 +102,22 @@ Package: inputenc 2006/05/05 v1.1b Input encoding file
 
 (/usr/share/texmf/tex/latex/base/latin1.def
 File: latin1.def 2006/05/05 v1.1b Input encoding file
-)) (./sbc-template.aux)
-\openout1 = `sbc-template.aux'.
+)) (./trabalho-redes2.aux)
+\openout1 = `trabalho-redes2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 32.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 22.
 
 (/usr/share/texmf/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
@@ -162,71 +162,62 @@ driver: pdftex
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <16> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 34.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 24.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 34.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 24.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 34.
+(Font)              <12> on input line 24.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 34.
+(Font)              <8> on input line 24.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 34.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 34.
-
-(/usr/share/texmf/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-LaTeX Font Info:    Try loading font information for OMS+pcr on input line 34.
-
-(/usr/share/texmf/tex/latex/psnfss/omspcr.fd
-File: omspcr.fd 
-)
-LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 34.
+(Font)              <6> on input line 24.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 36.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 26.
+
+Underfull \hbox (badness 3724) in paragraph at lines 31--32
+[]\OT1/ptm/m/it/12 Este tra-balho re-sume os seguintes ar-ti-gos que tratam so-
+bre
+ []
+
+
+Underfull \hbox (badness 2285) in paragraph at lines 31--32
+\OT1/ptm/m/it/12 seguran[]a em VANETs: [[]], [[]] e
+ []
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <13> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 55.
- [1
-
-{/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}] <fig1.jpg, id=12, 254.39
-04pt x 232.2276pt>
-File: fig1.jpg Graphic file (type jpg)
-
-<use fig1.jpg>
-LaTeX Font Info:    Try loading font information for OT1+phv on input line 115.
-
- (/usr/share/texmf/tex/latex/psnfss/ot1phv.fd
-File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 34.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 43.
+(/usr/share/texmf/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
 )
-LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <10> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 115.
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 43.
 
-<fig2.jpg, id=13, 205.7286pt x 234.1548pt>
-File: fig2.jpg Graphic file (type jpg)
- <use fig2.jpg>
-<table.jpg, id=14, 365.2044pt x 217.2918pt>
-File: table.jpg Graphic file (type jpg)
- <use table.jpg> [2 <./fig1.jpg>]
-(./sbc-template.bbl [3 <./fig2.jpg> <./table.jpg>]) [4] (./sbc-template.aux) ) 
+Underfull \hbox (badness 1521) in paragraph at lines 50--51
+[]\OT1/ptm/b/n/12 Identifica[][]ao de re-spon-s-abil-i-dade\OT1/ptm/m/n/12 : Us
+u[]arios dos ve[]^^Pculos de-vem ser re-
+ []
+
+[1
+
+{/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./trabalho-redes2.bbl) 
+[2] (./trabalho-redes2.aux) ) 
 Here is how much of TeX's memory you used:
- 1634 strings out of 256216
- 21143 string characters out of 1917072
- 73095 words of memory out of 1500000
- 4915 multiletter control sequences out of 10000+200000
- 21033 words of font info for 44 fonts, out of 1200000 for 2000
+ 1521 strings out of 256216
+ 19681 string characters out of 1917072
+ 75008 words of memory out of 1500000
+ 4815 multiletter control sequences out of 10000+200000
+ 17166 words of font info for 37 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
- 30i,10n,28p,270b,319s stack positions out of 5000i,500n,6000p,200000b,15000s
-{
-/usr/share/texmf/fonts/enc/dvips/base/8r.enc}</usr/share/texmf/fonts/type1/blue
-sky/cm/cmr8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/share
-/texmf/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texmf/fonts/type1/urw/hel
-vetic/uhvb8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmb8a.pfb></usr/share
-/texmf/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texmf/fonts/type1/urw/time
-s/utmr8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmri8a.pfb>
-Output written on sbc-template.pdf (4 pages, 205560 bytes).
+ 30i,8n,31p,583b,214s stack positions out of 5000i,500n,6000p,200000b,15000s
+{/usr/share/texmf/fonts/enc/dvips/base/8r.enc}</us
+r/share/texmf/fonts/type1/bluesky/cm/cmr8.pfb></usr/share/texmf/fonts/type1/blu
+esky/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/urw/times/utmb8a.pfb></usr/sha
+re/texmf/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texmf/fonts/type1/urw/ti
+mes/utmr8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmri8a.pfb>
+Output written on trabalho-redes2.pdf (2 pages, 68248 bytes).
 PDF statistics:
- 51 PDF objects out of 1000 (max. 8388607)
+ 34 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 131072)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
