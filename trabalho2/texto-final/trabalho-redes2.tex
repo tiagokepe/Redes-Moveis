@@ -56,9 +56,31 @@
    \item \textbf{Representação}: Neste ataque um nodo se mascara como uma outra instãncia da rede. Pode ser como um veículo de emergência, fazendo com que outros abram caminho, ele também pode se passar por uma RSU;
    \item \textbf{Violação de privacidade}: Feita através da captura de mensagens provenientes da comunicação de outros veículos;
    \item \textbf{Falsificação}: Um atacante pode forjar mensagens sobre avisos de perigo. Elas podem contaminar rapidamente uma porção da rede;
-   \item \textbf{Corrupção de mensagens em trânsito}: Um nodo desta rede pode intencionalmente modificar ou apagar mensagens  entre comunicações de outros nodos;
-   \item \textbf{Corrupção de informação a bordo}: O atacante pode modificar informação específica do veículo ou do motorista, tais como velocidade ou localização;
+   \item \textbf{Adulteração de mensagens em trânsito}: Um nodo desta rede pode intencionalmente modificar ou apagar mensagens  entre comunicações de outros nodos;
+   \item \textbf{Adulteração de informação a bordo}: O atacante pode modificar informação específica do veículo ou do motorista, tais como velocidade ou localização;
   \end{itemize}
+  
+  O esquema de uma rede depende também do entendimento das aplicações que serão executadas nela. Elas podem diferir em vários requisitos, como largura de banda, atraso e segurança. Elas podem apresentar diferentes padrões de comunicação. Aqui estão listadas as aplicações existentes e propostas para VANETs:
+  \begin{itemize}
+   \item \textbf{Críticas à segurança de vidas}: Usadas para prevenção de colisões no trânsito, devem possuir a mais alta prioridade;
+   \item \textbf{Aplicações para avisos de segurança}: Pemitem atrasos maiores na comunicação que aplicações críticas a segurança;
+   \item \textbf{Coleta de pedágio eletrônico}: Permitem cobrança de tarifas sem que haja nenhuma parada. Podem ser feitas através da identificação do veículo;
+   \item \textbf{Acesso a Internet}: É possível através de uma conexão unicast entre a OBU e a RSU.
+   \item \textbf{Comunicação de grupos}: Motoristas podem compartilhar mesmos interesses quando estão dirigindo nas mesmas condições. Isto poderia ser conseguido com uma implementação de multicast em VANET, o que ainda não foi possível devido sua complexidade.
+   \item \textbf{Busca de serviços em rodovias}
+  \end{itemize}
+  
+  Nós propomos um \textit{framework} de projeto de redes. Ele endereça os problemas de segurança e suportas as demandas de aplicaçãoes vistas. Então separamos ele em dois componentes principais:
+  
+  \begin{itemize}
+   \item \textbf{Esquema de controle de tipo de aplicação} - Este componente deve estar ciente da disponibilidade de diferentes aplicações, que podem estar em um nodo da rede ou distribuídas. Os servidores devem registrar aplicações neste componente, elas devem ser atualizadas periodicamente ou baseadas em um evento.
+   
+   \item \textbf{Esquema de roteamento unificado} - Possui informação sobre as diversas aplicações cadastradas. Pacotes de determinados fluxos devem ser encaminhados de acordo com aspectos de segurança de sua aplicação.
+  \end{itemize}
+  
+  Para desenvolver o \textit{framework} proposto, um número de tecnologias devem ser discutidas. A primeira delas é a detecção de ameaças. Temos também o gerenciamento de chaves, que devem ser estabelecidas por sessão. E finalizando, a codificação e o roteamento de mensagens, cujos estudos recentes não consideram os cenários das VANETs.
+
+
 
 
 \bibliographystyle{sbc}
