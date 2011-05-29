@@ -1,12 +1,5 @@
 \begin{thebibliography}{}
 
-\bibitem[Choi and Jung 2009]{choi:09}
-Choi, J. and Jung, S. (2009).
-\newblock A security framework with strong non-repudiation and privacy in
-  vanets.
-\newblock In {\em Consumer Communications and Networking Conference, 2009. CCNC
-  2009. 6th IEEE}, pages 1 --5.
-
 \bibitem[Liao and Li 2009]{liao:09}
 Liao, J. and Li, J. (2009).
 \newblock Effectively changing pseudonyms for privacy protection in vanets.
@@ -18,5 +11,11 @@ Qian, Y. and Moayeri, N. (2008).
 \newblock Design of secure and application-oriented vanets.
 \newblock In {\em Vehicular Technology Conference, 2008. VTC Spring 2008.
   IEEE}, pages 2794 --2799.
+
+\bibitem[Wagan et~al. 2010]{wagan:10}
+Wagan, A., Mughal, B., and Hasbullah, H. (2010).
+\newblock Vanet security framework for trusted grouping using tpm hardware.
+\newblock In {\em Communication Software and Networks, 2010. ICCSN '10. Second
+  International Conference on}, pages 309 --312.
 
 \end{thebibliography}

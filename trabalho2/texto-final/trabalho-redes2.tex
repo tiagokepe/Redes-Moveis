@@ -24,11 +24,11 @@
 \maketitle
 
 \begin{abstract}
-	Abstract in English.
+	This assignment summarizes the following papers:\cite{qian:08}, \cite{liao:09} e \cite{wagan:10}. We also did a comparative analysis of them.
 \end{abstract}
      
 \begin{resumo} 
-	Este trabalho resume os seguintes artigos que tratam sobre segurança em VANETs: \cite{qian:08}, \cite{liao:09} e \cite{choi:09}. Também foi feita uma análise comparativa entre eles.
+	Este trabalho resume os seguintes artigos que tratam sobre segurança em VANETs: \cite{qian:08}, \cite{liao:09} e \cite{wagan:10}. Também foi feita uma análise comparativa entre eles.
 \end{resumo}
 
 \section{Resumos}
@@ -70,16 +70,65 @@
    \item \textbf{Busca de serviços em rodovias}
   \end{itemize}
   
-  Nós propomos um \textit{framework} de projeto de redes. Ele endereça os problemas de segurança e suportas as demandas de aplicaçãoes vistas. Então separamos ele em dois componentes principais:
+  Nós propomos um \textit{framework} de projeto de redes. Ele endereça os problemas de segurança e suportas as demandas de aplicaçãoes vistas. Separamos ele em dois componentes principais:
   
   \begin{itemize}
    \item \textbf{Esquema de controle de tipo de aplicação} - Este componente deve estar ciente da disponibilidade de diferentes aplicações, que podem estar em um nodo da rede ou distribuídas. Os servidores devem registrar aplicações neste componente, elas devem ser atualizadas periodicamente ou baseadas em um evento.
    
-   \item \textbf{Esquema de roteamento unificado} - Possui informação sobre as diversas aplicações cadastradas. Pacotes de determinados fluxos devem ser encaminhados de acordo com aspectos de segurança de sua aplicação.
+   \item \textbf{Esquema de roteamento unificado} - Possui informação sobre as diversas aplicações cadastradas. Pacotes de determinados fluxos devem ser encaminhados de acordo com os aspectos de segurança de sua aplicação.
   \end{itemize}
   
   Para desenvolver o \textit{framework} proposto, um número de tecnologias devem ser discutidas. A primeira delas é a detecção de ameaças. Temos também o gerenciamento de chaves, que devem ser estabelecidas por sessão. E finalizando, a codificação e o roteamento de mensagens, cujos estudos recentes não consideram os cenários das VANETs.
+  
+\subsection{\cite{wagan:10}}
 
+  Segurança em comunicação é um assunto que atraiu muitas pesquisas em VANETs. Mensagens de seguranças podem ser divididas em dois tipos, mensagens periódicas e orientadas a eventos. Mensagens periódicas são trocadas por vizinhos, e contém informações sobre velocidade, localização, etc. Enquando mensagens orientadas a eventos são trocadas quando uma situação perigosa é verificada. Esta informação precisa ser entregue de maneira rápida e segura. 
+  
+  Um mecanismo de segurança foi proposto como padrão para VANEts, o PKI/ECDSA (\textit{Public Key Infrastructure with Elliptic Curve Digital Signature Algorithm}). Este mecanismo, que usa chaves assimétricas, é conhecido pelo custo computacional caro. Sabendo disso, esquemas que usam chaves simétricas foram propostos, eles reduzem o custo computacional, mas comprometem a segurança. Propomos o uso de módulos de criptografia simétricos e assimétricos integrados ao \textit{hardware}, e também o desenolvimento de confiança entro nodos vizinhos.
+  
+  Este esquema híbrido é composto de três componentes: hardware, entidade de grupo e comunicação de grupo. Os componentes trabalham colaborativamente.
+  
+  O hardware consiste consiste de um chip TDM (\textit{Trusted Platform Module}). Sua principal função é garantir que os outros módulos estejam funcionando corretamente. Ele consiste de vários motores criptográficos:
+  \begin{itemize}
+   \item \textbf{Módulo assimétrico(ECC)};
+   \item \textbf{Módulo simétrico};
+   \item \textbf{Gerador de números aleatórios};
+   \item \textbf{Módulo Hash}: Usa SHA1;
+  \end{itemize}
+  
+  O TPM recebe dados de um despachador de mensagens. Ela converte a mensagem para um valor Hash, usando seu módulo Hash. Então usando o ECC é ferada uma assinatura digital. Chaves simétricas também são usadas no envio e recebimento. No pionto de recebimento este processo é revertido. Se um nodo é escolhido como líder de um grupo, uma chave é gerada, usando o módulo simétrico e o gerador de números aleatórios. Esta chave então é distribuída via OBU.
+  
+  Neste trabalho, a entidade de grupo não se preocupa em como ele é composto. E sim no comportamento de componentes de um grupo. Um grupo consiste de um líder (GL), membros (GMs) e uma certa área geográfica de tamanho fixo. Nós assumimos que cada membro do grupo possui o componente de \textit{hardware}.
+  
+  Na comunicação de grupo, o GL gera uma chave simétrica usando o módulo simétrico do TDM e distribui através de uma conexão assimétrica. Cada novo GL gera uma nova chave. Além disso uma chave simétrica é usada para apenas uma mensagem de segurança baseada em eventos.
+  
+
+ \subsection{\cite{liao:09}}
+ 
+ VANEts consistem em comunicações veículo-para-veículo (V2V) e entre veículo-para-infraestrutura (V2I). Aplicações para esta rede tem o objetivo de melhorar a segurança e eficiência no transporte. Elas dependem do \textit{broadcast} periódico de informações do estado de cada veículo. 
+ 
+ Infelizmente este tipo de informação pode ser ser usado para rastreamento de usuários de veículos. Muitos estudos propõe uma mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de atacantes globais. Veículos pode ser destinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
+ 
+ O estado de um veículo $i$ é definido como $\{P_{i},V_{i},D_{i}\}$, que representa a posição, velocidade e direção de um veículo, respectivamente. A definição de nosso modelo de risco é a seguinte: quando um veículo $i$ altera seu pseudônimo, se pelo menos $n (n \geq 1)$ veículos com estado similar ao veículo $i$ alterarem seu pseudônimo  no mesmo tempo, a mudança é bem-sucedida e o ataque falha, caso contrário a mudança falha. Como as mensagens de localização transmitidas por \textit{broadcast} periodicamente juntamente com nosso pseudônimo, uma mudança dessincronizada pode levar ao rastreamento do veículo por um atacante.
+ 
+ Nós propomos um algoritmo chamado algoritmo de mudança síncrona de pseudônimos. Nossa proposta é garantir que com uma alta probabilidade elo menos dois veículos com estado similar alterem simultaneamente seus pseudônimos.
+ 
+ Ele funciona da seguinte maneira: um veículo escolhe um pseudônimo de um dispositivo onde os pseudônimos já foram instalados. Após isto, o sistema usa esta escolha por um período mínimo, no qual este pseudônimo é considerado estável. Quando este tempo expira, uma flag \textit{change} é atualizada para $1$. Esta flag é adicionada a mensagens de localização, avisando que este veículo está pronto para trocar seu pseudônimo. Ele entra então em um subciclo de espera-verificação. Ele espera por uma condição para mudar seu pseudônimo, ele checa se há $k$ veículos cujos estados são similares e que as flags $change$ são iguais a $1$. Se esta condição for verificada, o veículo muda a flag $change$ para $0$ e troca o pseudônimo. Se ele não encontra este evento em um tempo limite, ele muda o pseudônimo a força.
+ 
+ Se um veículo $i$ achou $k$ veículos com estado similar, é muito provável que alguns ou todos os $k$ veículos tabém encontrem esta condição. A razão disto é que eles estão na mesma vizinhança. 
+ 
+ Nosso algoritmo foi simulado, e o resultado foi comparado com outros dois algoritmos que possuem a mesma função: algoritmo de estado similar e algoritmo de posição. O nosso algoritmo possui o melhor desempenho entre os três. O nosso diferencial é que enquanto o algoritmo de posição e de estado similar consideram apenas o estado parcial e total, respectivamente, algoritmo de mudança síncrona de pseudônimos leva em conta também a simultaneidade de mudança de pseudônimos. 
+ 
+ \section{Análise Comparativa}
+ 
+ O artigo \cite{qian:08}, assim como \cite{wagan:10}, propõe um \textit{framework} de segurança. Ele é o único que tenta levantar todos os problemas de segurança em VANETs, com base na autenticação de aplicações disponiveis na rede. Ele também é o único que leva em conta diferentes perfis de aplicações propostas para  VANETs. Apesar disso, ele não é , muito claro como os componentes propostos de seu \textit{framework} endereçam cada um cada um dos tipos de ataques identificados e como eles arantem os requirimentos de segurança em VANETs.
+ 
+ Ele identifica quais são as tecnologias necessárias para que o desenvolvimento de sua proposta possa ser realizado. Porém nenhuma indicação de como isso seria implantado foi feita.
+ 
+ O artigo \cite{wagan:10} é mais objetivo que o mencionado anteriormente. Nele o problema de comunicação confiável entre um grupo é focado. A consideração sobre sua implementação também é feita, já que ele considera qual será a tecnologia usada, e como ela interage com outros componentes. Sua semelhança com \cite{liao:09} é que ambos comparam sua solução com outras alternativas, eles descrevem a vantagem de sua idéia em relação a outras. A diferença é que não são fornecidas simulações que comprovem a eficácia de uma possível implementação.
+ 
+ O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois identifica o problema, mostra alternativas, e apresenta resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabílista proposta, uma falha pode ser  considerada inaceitável em determinados cenários.
+ 
 
 
 
