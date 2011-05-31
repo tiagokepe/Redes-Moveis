@@ -7,12 +7,14 @@
 #include <wimsh_packet.h>
 #include <wimsh_mac.h>
 
+#define ROUND_DURATION 20
 
 
 
 class WimshBwManagerFeba : public WimshBwManager {
 	
 	typedef std::vector< std::bitset< MAX_SLOTS > > Bitmap;
+
 
 protected:
 	struct NeighbourDesc {
@@ -72,8 +74,11 @@ protected:
 
 
 	// Confirmações pendentes
-	CircularList< WimshMshDsch::GntIE > pending_confirmations;
+	CircularList< WimshMshDsch::GntIE > pending_confirmations_;
+	// Lista de disponibilidades a serem enviadas
 	CircularList< WimshMshDsch::AvlIE > availabilities_;
+	// Lista de fluxos ativos
+	CircularList< wimax::LinkId > activeList_;
 
 	Bitmap unconfirmedSlots_;
 
@@ -107,6 +112,10 @@ public:
 	void received (WimaxNodeId src, WimaxNodeId dst, unsigned char prio, WimaxNodeId source, unsigned int bytes) {
 		wm_.flow (src, dst, prio, source, wimax::IN); 
 	}
+	//! O quantm será usado para o tratamento da lista ativa, que é baseado no Deficit Round Robin.
+	unsigned int quantum (unsigned int ndx, wimax::LinkDirection dir) {
+		return (unsigned int) (ceil(wm_.weight (ndx, dir) * ROUND_DURATION)); }
+
 private:
 	void recvReq(WimshMshDsch* dsch);
 	void recvGnt(WimshMshDsch* dsch);

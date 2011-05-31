@@ -45,6 +45,11 @@ void WimshBwManagerFeba::recvReq(WimshMshDsch* dsch){
 		{
 
 			 neigh_[ngh_index].req_in_+= WimshMshDsch::pers2frames(it->persistence_) * mac_->slots2bytes(ngh_index, it->level_, false);
+
+			 // Inserimos este vizinho na lista de conexões ativas,
+			 // caso ele ainda não esteja lá
+			 if (   neigh_[ngh_index].req_in_ > neigh_[ngh_index].gnt_in_ && !( activeList_.find(wimax::LinkId(ngh_index,wimax::IN)) )   )
+				 activeList_.insert(wimax::LinkId(ngh_index,wimax::IN));
 		}
 	}
 }
@@ -89,7 +94,7 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 				it->nodeId_ = dsch->src();
 				it->fromRequester_ = true;
 
-				pending_confirmations.insert(*it);
+				pending_confirmations_.insert(*it);
 
 				neigh_[ngh_index].gnt_out_+= frame_range * mac_->slots2bytes(ngh_index, it->range_, false);
 
@@ -182,6 +187,42 @@ void WimshBwManagerFeba::recvAvl(WimshMshDsch* dsch){
 }
 
 void WimshBwManagerFeba::schedule (WimshMshDsch* dsch){
+
+	//  Encaixar as disponibilidades
+	// availabilities(dsch);
+
+	// Confirmar concessões
+	// confirm(dsch);
+
+	// Concessões extras para requisições que não puderam ser atendidas.
+	//regrant(dsch);
+
+	// Varre a lista de ativos para tratar requisições e concessões.
+	//requestAndGrant(dsch);
+
+
+}
+
+void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
+
+	// Enquanto a lista de conexões ainda estiver ativa, continue
+	while( !activeList_.empty() )
+	{
+		wimax::LinkDirection direction = activeList_.current().dir;
+		unsigned int ngh_index = activeList_.current().ndx_;
+
+		// Se for um fluxo de entrada, eu devo conceder
+		if( direction == wimax::IN ){
+			while ( dsch->remaining() > WimshMshDsch::GntIE::size() ){
+
+			}
+
+		} // Se for um fluxo de saída, eu devo requisitar
+		else{
+
+		}
+
+	}
 }
 
 void WimshBwManagerFeba::initialize (){
