@@ -1,18 +1,11 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.8.18)  1 JUN 2011 15:31
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.14)  2 JUN 2011 16:46
 entering extended mode
- restricted \write18 enabled.
  %&-line parsing enabled.
 **trabalho-redes2.tex
 (./trabalho-redes2.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, croatian, bulgarian, ukrainian, russian, czech, slovak, danish, dut
-ch, finnish, french, basque, ngerman, german, german-x-2009-06-19, ngerman-x-20
-09-06-19, ibycus, monogreek, greek, ancientgreek, hungarian, italian, latin, mo
-ngolian2a, mongolian, bokmal, nynorsk, romanian, irish, coptic, serbian, turkis
-h, welsh, esperanto, uppersorbian, estonian, indonesian, interlingua, icelandic
-, kurmanji, slovenian, polish, portuguese, spanish, galician, catalan, swedish,
- loaded.
+yphenation, loaded.
 (/usr/share/texmf-texlive/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texmf-texlive/tex/latex/base/size12.clo
@@ -55,9 +48,7 @@ Package ifvtex Info: VTeX not detected.
 \Gm@odd@mp=\dimen105
 \Gm@even@mp=\dimen106
 \Gm@dimlist=\toks15
-
-(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
-(./caption2.sty
+) (./caption2.sty
 Package: caption2 2002/08/03 v2.1 Customising captions (AS)
 \captionmargin=\dimen107
 \captionwidth=\dimen108
@@ -65,7 +56,8 @@ Package: caption2 2002/08/03 v2.1 Customising captions (AS)
 Package caption2 Info: Running in caption2 v2.0 compatibility mode on input lin
 e 147.
 \captionlinewidth=\dimen110
-) (/usr/share/texmf-texlive/tex/latex/psnfss/times.sty
+)
+(/usr/share/texmf-texlive/tex/latex/psnfss/times.sty
 Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
 )
 \c@instn=\count90
@@ -97,7 +89,7 @@ File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
 (/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
+File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
 \Gread@gobject=\count91
 ))
 \Gin@req@height=\dimen116
@@ -175,7 +167,7 @@ driver: pdftex
 
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
-(/usr/share/texmf/tex/context/base/supp-pdf.mkii
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count92
 \scratchdimen=\dimen118
@@ -246,13 +238,13 @@ s[]^^Pncrona de
 
 [4] (./trabalho-redes2.bbl) [5] (./trabalho-redes2.aux) ) 
 Here is how much of TeX's memory you used:
- 1929 strings out of 493911
- 25677 string characters out of 1155272
- 88961 words of memory out of 3000000
- 5186 multiletter control sequences out of 15000+50000
+ 1929 strings out of 495061
+ 25583 string characters out of 1182621
+ 88251 words of memory out of 3000000
+ 5105 multiletter control sequences out of 15000+50000
  17166 words of font info for 37 fonts, out of 3000000 for 9000
- 706 hyphenation exceptions out of 8191
- 30i,8n,31p,844b,212s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 28 hyphenation exceptions out of 8191
+ 30i,8n,31p,848b,212s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/share/texmf-texl
 ive/fonts/enc/dvips/base/8r.enc}</usr/share/texmf-texlive/fonts/type1/public/am
 sfonts/cm/cmmi12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
@@ -262,7 +254,7 @@ f-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/f
 onts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times
 /utmbi8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmr8a.pfb></usr/s
 hare/texmf-texlive/fonts/type1/urw/times/utmri8a.pfb>
-Output written on trabalho-redes2.pdf (5 pages, 123926 bytes).
+Output written on trabalho-redes2.pdf (5 pages, 123892 bytes).
 PDF statistics:
  55 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
