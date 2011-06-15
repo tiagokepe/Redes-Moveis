@@ -31,10 +31,11 @@ protected:
 
 		unsigned int cnf_in_;
 
-		/* Compensação. */
+		/* Compensação. Usado no DRR */
 
 		unsigned int lag_in_;
 
+		/* A serem requisitados */
 		unsigned int backlog_;
 
 		
@@ -53,6 +54,7 @@ protected:
 			gnt_out_=0;
 			lag_in_=0;
 			lag_out_=0;
+			backlog_=0;
 		}
 
 

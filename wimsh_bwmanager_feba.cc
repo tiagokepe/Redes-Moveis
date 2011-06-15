@@ -213,7 +213,14 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 
 		// Se for um fluxo de entrada, eu devo conceder
 		if( direction == wimax::IN ){
-			while ( dsch->remaining() > WimshMshDsch::GntIE::size() ){
+
+			// Se a mensagem estiver cheia, eu não incluo mais grants
+			if ( dsch->remaining() > WimshMshDsch::GntIE::size()  )
+				break;
+
+			// Adiciono grants de acordo com o DRR
+			while ( ( dsch->remaining() > WimshMshDsch::GntIE::size() ) && (neigh_[ngh_index].lag_in_ > 0 ) ){
+
 
 			}
 
@@ -276,11 +283,36 @@ void WimshBwManagerFeba::initialize (){
 
 
 }
-	
+/*
+ * Desejamos enviar uma quantidade de bytes a um determinado nodo
+ */
 void WimshBwManagerFeba::backlog (WimaxNodeId src, WimaxNodeId dst, unsigned char prio, WimaxNodeId nexthop, unsigned int bytes){
+
+	// Índice do meu vizinho
+	const unsigned int ndx = mac_->neigh2ndx(nexthop);
+
+	// Adicionamos este fluxo ao pesador de fluxos
+	wm_.flow(src,dst,prio,ndx,wimax::IN);
+
+
+	neigh_[ndx].backlog_+=bytes;
+
+	// Este fluxo precisa ser adicionado se não existir, para que o alocador em Deficit Round Robin possa ser usado.
+	if (  !activeList_.find(wimax::LinkId(ndx, wimax::IN))  )
+		activeList_.insert(wimax::LinkId(ndx,wimax::IN));
 }
 	
 void WimshBwManagerFeba::backlog (WimaxNodeId nexthop, unsigned int bytes){
+
+	// Índice do meu vizinho
+	const unsigned int ndx = mac_->neigh2ndx(nexthop);
+
+	wm_.flow(ndx, wimax::IN);
+
+	neigh_[ndx].backlog_+=bytes;
+
+	if (  !activeList_.find(wimax::LinkId(ndx, wimax::IN))  )
+		activeList_.insert(wimax::LinkId(ndx,wimax::IN));
 }
 
 void WimshBwManagerFeba::sent (WimaxNodeId nexthop, unsigned int bytes){
