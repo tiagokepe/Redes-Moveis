@@ -208,24 +208,76 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 	// Enquanto a lista de conexões ainda estiver ativa, continue
 	while( !activeList_.empty() )
 	{
-		wimax::LinkDirection direction = activeList_.current().dir;
+		wimax::LinkDirection direction = activeList_.current().dir_;
 		unsigned int ngh_index = activeList_.current().ndx_;
 
 		// Se for um fluxo de entrada, eu devo conceder
+		// Ver grant(i) no artigo do FEBA
 		if( direction == wimax::IN ){
 
 			// Se a mensagem estiver cheia, eu não incluo mais grants
 			if ( dsch->remaining() > WimshMshDsch::GntIE::size()  )
 				break;
 
+
+			// lag_i_in <- min{lag_i_in + quantum, req_i_in - gnt_i_in}
+			unsigned int pending_bytes = neigh_[ngh_index].req_in_ - neigh_[ngh_index].gnt_in_;
+			neigh_[ngh_index].lag_in_+=quantum(ngh_index,wimax::IN);
+			neigh_[ngh_index].lag_in_= ( neigh_[ngh_index].lag_in_ > pending_bytes) ? pending_bytes : neigh_[ngh_index].lag_in_;
+
+
 			// Adiciono grants de acordo com o DRR
 			while ( ( dsch->remaining() > WimshMshDsch::GntIE::size() ) && (neigh_[ngh_index].lag_in_ > 0 ) ){
 
+				WimshMshDsch::GntIE gnt;
 
+				//gnt = fit(ngh_index, initial horizon, limit horizon );
+
+				/*
+				 * Se não achamos nenhum espaço no horizonte de alocação,
+				 * então não há mais o que alocar.
+				 */
+				if ( gnt.range_ <= 0 ) break;
+
+				dsch->add(gnt);
+
+				// Precisamos descobrir o número de bytes concedidos
+				unsigned int frame_range = WimshMshDsch::pers2frames(gnt.persistence_);
+				unsigned int bytes_granted = frame_range * mac_->slots2bytes(ngh_index,gnt.range_,true);
+
+				//gnt_i_in = gnt_i_in + granted
+				neigh_[ngh_index].gnt_in_+=bytes_granted;
+
+				// lag_i_in = lag_i_in - granted
+				neigh_[ngh_index].lag_in_ = ( bytes_granted > neigh_[ngh_index].lag_in_ ) ? 0 : neigh_[ngh_index].lag_in_ - bytes_granted;
+
+				// Não podemos mais receber nenhuma transmissão neste canal
+				setSlots(busy_, gnt.frame_, frame_range, gnt.start_, gnt.range_, true)
 			}
 
+			// if ( lag_i_in > lag_max ) terminate
+			if ( neigh_[ngh_index].lag_in_ > LAG_MAX )
+				break;
+
+			/*
+			 * Precisamos mover o ponteiro de nossa lista ativa,
+			 * há dois casos:
+			 * - As requisições já foram satisfeitas
+			 * - ainda não
+			 */
+
+			if ( neigh_[ngh_index].gnt_in_ >= neigh_[ngh_index].req_in_ )
+			{
+				neigh_[ngh_index].lag_in_ = 0;
+				activeList_.erase();
+			}
+			else
+			{
+				activeList_.move();
+			}
 		} // Se for um fluxo de saída, eu devo requisitar
 		else{
+
 
 		}
 
