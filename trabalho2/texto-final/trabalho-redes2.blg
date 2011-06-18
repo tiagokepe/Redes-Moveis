@@ -4,42 +4,42 @@ The style file: sbc.bst
 Database file #1: trabalho-redes2.bib
 You've used 3 entries,
             1935 wiz_defined-function locations,
-            488 strings with 4250 characters,
-and the built_in function-call counts, 1703 in all, are:
-= -- 177
-> -- 44
+            487 strings with 4287 characters,
+and the built_in function-call counts, 1721 in all, are:
+= -- 176
+> -- 49
 < -- 5
-+ -- 14
-- -- 14
-* -- 111
-:= -- 244
++ -- 16
+- -- 16
+* -- 122
+:= -- 252
 add.period$ -- 9
 call.type$ -- 3
-change.case$ -- 22
+change.case$ -- 23
 chr.to.int$ -- 3
 cite$ -- 3
-duplicate$ -- 89
-empty$ -- 136
+duplicate$ -- 83
+empty$ -- 137
 format.name$ -- 21
-if$ -- 389
+if$ -- 388
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 3
 newline$ -- 18
 num.names$ -- 9
-pop$ -- 32
+pop$ -- 33
 preamble$ -- 1
-purify$ -- 22
+purify$ -- 23
 quote$ -- 0
-skip$ -- 78
+skip$ -- 69
 stack$ -- 0
-substring$ -- 143
-swap$ -- 38
-text.length$ -- 3
+substring$ -- 149
+swap$ -- 33
+text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 18
 warning$ -- 0
 while$ -- 12
 width$ -- 0
-write$ -- 41
+write$ -- 42

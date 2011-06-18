@@ -10,7 +10,7 @@
      
 \sloppy
 
-\title{Trablho 2 de Redes Móveis}
+\title{Segurança em \textit{Vehicular Ad-hoc Networks}}
 
 \author{Antonio Carlos S. Furtado Jr.\inst{1}, Tiago R. Kepe\inst{1} }
 
@@ -24,67 +24,82 @@
 \maketitle
 
 \begin{abstract}
-	This assignment summarizes the following papers:\cite{qian:08}, \cite{liao:09} e \cite{wagan:10}. We also did a comparative analysis of them.
+	This assignment summarizes three papers that propose solutions for distinct security problems in VANEts. It was also done comparative analysis of them.
 \end{abstract}
      
 \begin{resumo} 
-	Este trabalho resume os seguintes artigos que tratam sobre segurança em VANETs: \cite{qian:08}, \cite{liao:09} e \cite{wagan:10}. Também foi feita uma análise comparativa entre eles.
+	Este trabalho resume três trabalhos que propõe soluções para problemas de segurança em VANETs distintos. Também foi feita uma análise comparativa entre eles.
 \end{resumo}
 
-\section{Resumos}
+\section{Introdução}
+  Em \textit{Vehicular Ad-hoc Networks} (VANETs), cada veículo é equipado com um dispositivo conhecido como \textit{On-Board Units} (OBUs). Ele permite a comunicação com outros veículos, conhecida como \textit{Vehicle to Vehicle} (V2V), e também a comunicação com as \textit{Roadside Units} (RSUs), comunicação conhecida como \textit{Vehicle to Roadside} (V2R). As RSUs são colocadas em pontos críticos das vias, elas tem o intuito de melhorar o trânsito e torná-lo mais seguro. Elas também podem ser conectadas a um \textit{backbone}, isto permite que outras aplicação de rede e serviços sejam fornecidos aos veículos, como acesso a Internet.
+  
+  Segurança em comunicação é um assunto que atraiu muitas pesquisas em VANETs. Ainda há um número de problemas a serem resolvidos antes que as VANETS possam ser implementadas. Cada artigo aqui apresentado cobre um problema distinto.
+  
+  Em \cite{samara:10} o foco do artigo está em cuidar com segurança e operações em certificados. Os certificados são usados para distinguir atacantes na rede. No artigo \cite{wagan:10} o objetivo é garantir confiança na comunicação entre nodos vizinhos, para que seja formado um grupo no qual há a necessidade de comunicação rápida e segura. Finalmente, em \cite{liao:09} o problema do rastreamento de um veículo é estudado. Em VANETs isto é possível através da captura de mensagens em \textit{broadcast} sobre o estado de cada veículo, as quais são necessárias. Para resolver este problema ele apresenta uma solução baseada na troca de pseudônimos na rede
+  
 
-\subsection{\cite{qian:08}}
-  Em VANETs, cada veículo é equipado com um dispositivo conhecido como \textit{On-Board Units} (OBUs). Ele permite a comunicação com outros veículos, conhecida como V2V, e também a comunicação com as \textit{Roadside Units} (RSUs), comunicação conhecida como V2R. As RSUs são colocadas em pontos críticos das vias, elas tem o intuito de melhorar o trânsito e torná-lo mais seguro. Elas também podem ser conectadas a um \textit{backbone}, isto permite que outras aplicação de rede e serviços sejam fornecidos aos veículos, como acesso a Internet.
+\section{Resumos}
   
-  Ainda há um número de problemas a serem resolvidos antes que as VANETS possam ser implementadas. O foco desse trabalho consiste nos dois maiores problemas, que são a segurança e o suporte de aplicaçãoes existentes e futuras nesta tipo de rede.
+\subsection{\cite{samara:10}}
+
+  Em uma VANET comum, veículos possuem certificados. Ele permite que cada veículo possa transmitir, mesmo que este seja um atacante. A idéia mais aplicada em artigos relacionados é usar uma Lista de Revogação de Certificados (CRL). A CRL permite que todos os veículos transmitam. Se um veículo recebe uma mensagem, ele irá aceitá-la e verificar se a identificação do transmissor consta na CRL. Se ela constar, a mensagem será ignorada, senão ela será aceita. Este esquema causa uma grande sobrecarga. Ele requer que cada veículo possua um CRL atualizado, o que requer freqüentes retransmissões.
   
-  VANETs possuem alguns problemas já existentes em redes \textit{Ad Hoc} e redes de sensores. Além disso ela possui outros problemas decorrentes de suas particularidades, tais como seu tamanho e a mobilidade em alta velocidade. Esta rede deve assegurar que informação críticas para a segurança dos passageiros não possam ser modificadas ou inseridas por um atacante. Ela também deve estabelecer a reponsabilidade dos motoristas e manter a privacidade de suas informações. A segurança de uma VANET deve cumprir os seguintes requisitos:
+  A idéia deste artigo é fornecer dois tipos de certificados na rede. O primeiro é o Certificado Válido (VC), este será atribuído a um veículo ``bem-comportado'', ou seja, um não-atacante. O segundo é o Certificado Adversário (AC), dado a veículos atacantes. Cada certificado deverá ocupar $100$ \textit{bytes} de memória. Os campos do VC são os seguintes:
   \begin{itemize}
-   \item \textbf{Autenticação e integridade de mensagens}
-   \item \textbf{Não-repudiação de mensagens}: Nodo não pode negar ter enviado a mensagem;
-   \item \textbf{Autenticação de entidades}: Deve-se ter certeza que o nodo que enviou a mensagem é genuíno;
-   \item \textbf{Controle de acesso}: Políticas para acesso de serviços;
-   \item \textbf{Confidencialidade da mensagem}
-   \item \textbf{Disponibilidade}: rede deve permanecer operacional após falhas ou ataques;
-   \item \textbf{Privacidade e anonimato}: Informação deve ser protegida de acesso não autorizado;
-   \item \textbf{Identificação de responsabilidade}: Usuários dos veículos devem ser responsáveis por suas ações deliberadas ou acidentais, as quais podem romper operações com outros nodos ou com o sistema de transportes.
+   \item \textbf{Número serial};
+   \item \textbf{Nome do emissor do certificado};
+   \item \textbf{Início}: Define o início do prazo de validade deste certificado;
+   \item \textbf{Fim}: Define o fim do prazo de validade deste certificado;
+   \item \textbf{Pseudônimo};
+   \item \textbf{Chave pública}.
   \end{itemize}
   
-  Uma rede vulnerável pode sofrer ataques em várias das suas camadas, aqui estão explicados alguns dos ataques mais comums:
+  Enquanto o AC possui estes campos:
   \begin{itemize}
-   \item \textbf{Interferência}: O atacante intencionalmente gera transmissões que interferem na recepção de transmissões autênticas;
-   \item \textbf{Representação}: Neste ataque um nodo se mascara como uma outra instância da rede. Pode ser como um veículo de emergência, fazendo com que outros abram caminho, ele também pode se passar por uma RSU;
-   \item \textbf{Violação de privacidade}: Feita através da captura de mensagens provenientes da comunicação de outros veículos;
-   \item \textbf{Falsificação}: Um atacante pode forjar mensagens sobre avisos de perigo. Elas podem contaminar rapidamente uma porção da rede;
-   \item \textbf{Adulteração de mensagens em trânsito}: Um nodo desta rede pode intencionalmente modificar ou apagar mensagens  entre comunicações de outros nodos;
-   \item \textbf{Adulteração de informação a bordo}: O atacante pode modificar informação específica do veículo ou do motorista, tais como velocidade ou localização;
+   \item \textbf{Número serial};
+   \item \textbf{Nome do emissor do certificado};
+   \item \textbf{Razão da revogação};
+   \item \textbf{Data de revogação}: Define o início do prazo de validade deste certificado;
+   \item \textbf{Data de revisão}: Define o fim do prazo de validade deste certificado;
+   \item \textbf{Pseudônimo}.
   \end{itemize}
   
-  O esquema de uma rede depende também do entendimento das aplicações que serão executadas nela. Elas podem diferir em vários requisitos, como largura de banda, atraso e segurança. Elas podem apresentar diferentes padrões de comunicação. Aqui estão listadas as aplicações existentes e propostas para VANETs:
+  Cada veículo em uma VANET já possui um certificado de identificação próprio. Ele expira a cada 10 minutos e garante a identidade do transmissor. O uso do VC tem como objetivo garantir a intenção do transmissor. Em uma transmissão, um veículo enviará seu certificado de identificação, juntamente com um VC ou um AC, ambos criptografados. Quando um nodo recebe esta transmissão, ele descriptografa a mensagem e se um VC foi enviado. Se ele for encontrado, a mensagem é aceita. Se um AC for encontrado, a mensagem é ignorada e os nodos vizinhos são alertados sobre a presença do atacante. Este alerta contém os seguintes campos:
+  
   \begin{itemize}
-   \item \textbf{Críticas à segurança de vidas}: Usadas para prevenção de colisões no trânsito, devem possuir a mais alta prioridade;
-   \item \textbf{Aplicações para avisos de segurança}: Pemitem atrasos maiores na comunicação que aplicações críticas a segurança;
-   \item \textbf{Coleta de pedágio eletrônico}: Permitem cobrança de tarifas sem que haja nenhuma parada. Podem ser feitas através da identificação do veículo;
-   \item \textbf{Acesso a Internet}: É possível através de uma conexão unicast entre a OBU e a RSU.
-   \item \textbf{Comunicação de grupos}: Motoristas podem compartilhar mesmos interesses quando estão dirigindo nas mesmas condições. Isto poderia ser conseguido com uma implementação de multicast em VANET, o que ainda não foi possível devido sua complexidade.
-   \item \textbf{Busca de serviços em rodovias}
+   \item \textbf{Identificação do nodo que fez o alerta};
+   \item \textbf{Identificação do atacante};
+   \item \textbf{Marca temporal};
+   \item \textbf{Razão da revogação}: Campo presente no AC;
+   \item \textbf{Data de revisão}: Campo presente no AC.
   \end{itemize}
   
-  Foi proposto um \textit{framework} de projeto de redes. Ele endereça os problemas de segurança e suporta as demandas de aplicaçãoes vistas. Foi separado em dois componentes principais:
+  Cada alerta é colocado em uma lista, chamada Lista de Atacantes (AL). Esta lista contém no máximo $10$ entradas, ela mantém apenas os atacantes mais recentemente identificados. O uso desta lista é idêntico ao uso da CRL. A diferença é que se um transmissor não for identificado nesta lista, sua mensagem não será aceita automaticamente. Antes será executado o processo de identificação de certificado AC ou VC, o qual foi mencionado anteriormente no texto. 
   
-  \begin{itemize}
-   \item \textbf{Esquema de controle de tipo de aplicação} - Este componente deve estar ciente da disponibilidade de diferentes aplicações, que podem estar em um nodo da rede ou distribuídas. Os servidores devem registrar aplicações neste componente, elas devem ser atualizadas periodicamente ou baseadas em um evento.
+  A AL possui duas vantagens claras em relação a CRL. Primeiramente ela é uma lista interna, então ela não precisa ser retransmitida periodicamente. Em segundo lugar, ela não é tão grande, pois só são mantidas informações em relação a nodos vizinhos, e não toda a rede. Isto torna a busca e armazenamento mais fáceis. O uso desses certificados e da AL eliminarão a necessidade da CRL. 
+  
+  A partir da da idéia de certificados proposta, este artigo propõe um protocolo para a revogação de certificados, chamado de Protocolo do Adversário Válido (VAP). Este protocolo consiste na execução dos seguintes passos:
+  
+  \begin{enumerate}
+   \item \textbf{Suspeita}: A maneira que um veículo levanta suspeitas acerca de outro está fora do escopo deste trabalho. Porém consideremos o caso em que todos os vizinhos de um nodo possuem VCs e enviam mensagens com a mesma informação, exceto um deles, o qual envia informação contraditória. Se esta informação persistir, uma acusação é feita a RSU;
    
-   \item \textbf{Esquema de roteamento unificado} - Possui informação sobre as diversas aplicações cadastradas. Pacotes de determinados fluxos devem ser encaminhados de acordo com os aspectos de segurança de sua aplicação.
-  \end{itemize}
+   \item \textbf{Acusação}: Se o número de acusações que uma RSU será comparado com um limite. Este limite é definido com base no número de veículos na rodovia. Se este limite for ultrapasSado, a RSU envia a acusação para uma Unidade Certificadora (CA);
+   
+   \item A CA considerará este veículo como um atacante;
+   
+   \item CA manda uma ordem para a RSU, para que ela apague o certificado daquele veículo. E envia um novo AC para ser usado por aquele veículo;
+   
+   \item RSU executa as ordens enviadas no passo anterior pelo CA. Além disso ele envia por \textit{broadcast} uma mensagem de alerta, para que todos os veículos adicionem o atacante na AL;
+
+\end{enumerate}
   
-  Para desenvolver o \textit{framework} proposto, um número de tecnologias devem ser discutidas. A primeira delas é a detecção de ameaças. Existe também o gerenciamento de chaves, que devem ser estabelecidas por sessão. E finalizando, a codificação e o roteamento de mensagens, cujos estudos recentes não consideram os cenários das VANETs.
+  Após ter feito a revogação, este nodo revogado terá apenas um certificado AC para transmitir. Isso dirá a outros veículos que este nodo não é confiável. Em trabalhos futuros é esperado que este protocolo possa ser simulado.
+  
   
 \subsection{\cite{wagan:10}}
-
-  Segurança em comunicação é um assunto que atraiu muitas pesquisas em VANETs. Mensagens de seguranças podem ser divididas em dois tipos, mensagens periódicas e orientadas a eventos. Mensagens periódicas são trocadas por vizinhos, e contém informações sobre velocidade, localização, etc. Enquando mensagens orientadas a eventos são trocadas quando uma situação perigosa é verificada. Esta informação precisa ser entregue de maneira rápida e segura. 
   
-  Um mecanismo de segurança foi proposto como padrão para VANEts, o PKI/ECDSA (\textit{Public Key Infrastructure with Elliptic Curve Digital Signature Algorithm}). Este mecanismo, que usa chaves assimétricas, é conhecido pelo custo computacional caro. Sabendo disso, esquemas que usam chaves simétricas foram propostos, eles reduzem o custo computacional, mas comprometem a segurança. Foi proposto o uso de módulos de criptografia simétricos e assimétricos integrados ao \textit{hardware}, e também o desenvolvimento de confiança entre nodos vizinhos.
+  Inicialmente estudos propuseram mecanismos de segurança baseados em chaves assimétricas. Esses mecanismos são conhecidos pelo custo computacional caro. Sabendo disso, esquemas posteriores que usavam chaves simétricas foram propostos. Eles reduziam o custo computacional, mas comprometiam a segurança. Este artigo propõe o uso de módulos de criptografia simétricos e assimétricos integrados ao \textit{hardware}, e também o desenvolvimento de confiança entre nodos vizinhos.
   
   Este esquema híbrido é composto de três componentes: hardware, entidade de grupo e comunicação de grupo. Os componentes trabalham colaborativamente.
   
@@ -98,22 +113,20 @@
   
   O TPM recebe dados de um despachador de mensagens. Ela converte a mensagem para um valor Hash, usando seu módulo Hash. Então usando o ECC é gerada uma assinatura digital. Chaves simétricas também são usadas no envio e recebimento. No ponto de recebimento este processo é revertido. Se um nodo é escolhido como líder de um grupo, uma chave é gerada, usando o módulo simétrico e o gerador de números aleatórios. Esta chave então é distribuída via OBU.
   
-  Neste trabalho, a entidade de grupo não se preocupa em como ele é composto. E sim no comportamento de componentes de um grupo. Um grupo consiste de um líder (GL), membros (GMs) e uma certa área geográfica de tamanho fixo. Foi considerado   que cada membro do grupo possui o componente de \textit{hardware}.
+  O segundo componente mencionado neste trabalho é o grupo, que é simplesmente um conjunto de nodos. Em VANETs grupos podem ser formados de várias maneiras. Um método bastante usado é dividir geograficamente uma rodovia em segmentos, também conhecidos como células. Outras técnicas de agrupamento também são possíveis. A formação de um grupo está fora do escopo deste trabalho. Apenas reconhecemos que um grupo é um conjunto de nodos próximos. Nós nos preocupamos aqui com o comportamento dos componentes de um grupo. Um grupo consiste de um líder (GL), membros (GMs) e uma certa área geográfica de tamanho fixo. A seleção de um líder pode ser feita de diferentes maneiras, baseadas na posição posição geográfica. Foi considerado   que cada membro do grupo possui o componente de \textit{hardware}.
   
-  Na comunicação de grupo, o GL gera uma chave simétrica usando o módulo simétrico do TDM e distribui através de uma conexão assimétrica. Cada novo GL gera uma nova chave. Além disso uma chave simétrica é usada para apenas uma mensagem de segurança baseada em eventos.
+  Na comunicação de grupo, o GL gera uma chave simétrica usando o módulo simétrico do TDM e distribui através de uma conexão assimétrica. Cada novo GL gera uma nova chave a ser distribuída. Nesta comunicação há dois tipos de mensagens que são considerados. O primeiro são as mensagens periódicas sobre o estado de um veículo. Estas mensagens serão transmitidas através do método de criptografia assimétrico. O segundo tipo são as mensagens baseadas em eventos. Elas serão transmitidas através do método simétrico, espera-se que com isto o tempo de resposta seja melhorado. Cada chave simétrica é única para determinado evento. Em trabalhos futuros, esperamos poder simular testes para validar o \textit{framework} proposto.
   
 
  \subsection{\cite{liao:09}}
  
- VANEts consistem em comunicações veículo-para-veículo (V2V) e entre veículo-para-infraestrutura (V2I). Aplicações para esta rede tem o objetivo de melhorar a segurança e eficiência no transporte. Elas dependem do \textit{broadcast} periódico de informações do estado de cada veículo. 
+ Infelizmente informações em \textit{broadcast} periódicas sobre o estado do veículo podem ser usadas para o rastreamento de usuários de veículos. Muitos estudos propõe uma mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de atacantes globais. Veículos podem ser distinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
  
- Infelizmente este tipo de informação pode ser usado para rastreamento de usuários de veículos. Muitos estudos propõe uma mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de atacantes globais. Veículos podem ser destinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
- 
- O estado de um veículo $i$ é definido como $\{P_{i},V_{i},D_{i}\}$, que representa a posição, velocidade e direção de um veículo, respectivamente. A definição do modelo de risco proposto é a seguinte: quando um veículo $i$ altera seu  pseudônimo, se pelo menos $n (n \geq 1)$ veículos com estado similar ao veículo $i$ alterarem seu pseudônimo  no mesmo tempo, a mudança é bem-sucedida e o ataque falha, caso contrário a mudança falha. Como as mensagens de localização transmitidas por \textit{broadcast} periodicamente juntamente com nosso pseudônimo, uma mudança desincronizada pode levar ao rastreamento do veículo por um atacante.
+ O estado de um veículo $i$ é definido como $\{P_{i},V_{i},D_{i}\}$, que representa a posição, velocidade e direção de um veículo, respectivamente. A definição do modelo de risco proposto é a seguinte: quando um veículo $i$ altera seu  pseudônimo, se pelo menos $n (n \geq 1)$ veículos com estado similar ao veículo $i$ alterarem seu pseudônimo  no mesmo tempo, a mudança é bem-sucedida e o ataque falha, caso contrário a mudança falha. Como as mensagens de localização transmitidas por \textit{broadcast} periodicamente juntamente com nosso pseudônimo, uma mudança dessincronizada pode levar ao rastreamento do veículo por um atacante.
  
  Foi proposto um algoritmo chamado algoritmo de mudança síncrona de pseudônimos. A proposta é garantir que com uma alta  probabilidade pelo menos dois veículos com estado similar alterem simultaneamente seus pseudônimos.
  
- Ele funciona da seguinte maneira: um veículo escolhe um pseudônimo de um dispositivo, no qual os pseudônimos já foram instalados. Após isto, o sistema usa esta escolha por um período mínimo, no qual este pseudônimo é considerado estável. Quando o tempo expira, uma flag \textit{change} é atualizada para $1$. Esta flag é adicionada a mensagens de localização, avisando que este veículo está pronto para trocar seu pseudônimo. Ele entra então em um subciclo de espera-verificação. Ele  espera por uma condição para mudar seu pseudônimo, checa se há $k$ veículos, cujos estados são similares e que as flags $change$ são iguais a $1$. Se esta condição for verificada, o veículo muda a flag $change$ para $0$ e troca o pseudônimo. Se ele não encontra este evento em um tempo limite, ele muda o pseudônimo a força.
+ Ele funciona da seguinte maneira: um veículo escolhe um pseudônimo de um dispositivo, no qual os pseudônimos já foram instalados. Após isto, o sistema usa esta escolha por um período mínimo, no qual este pseudônimo é considerado estável. Quando o tempo expira, uma \textit{flag} \textit{change} é atualizada para $1$. Esta \textit{flag} é adicionada a mensagens de localização, avisando que este veículo está pronto para trocar seu pseudônimo. Ele entra então em um subciclo de espera-verificação. Ele  espera por uma condição para mudar seu pseudônimo, checa se há $k$ veículos, cujos estados são similares e que as \textit{flags} $change$ são iguais a $1$. Se esta condição for verificada, o veículo muda a \textit{flags} $change$ para $0$ e troca o pseudônimo. Se ele não encontra este evento em um tempo limite, ele muda o pseudônimo a força.
  
  Se um veículo $i$ achou $k$ veículos com estado similar, é muito provável que alguns ou todos os $k$ veículos também encontrem esta condição. A razão disto é que eles estão na mesma vizinhança. 
  
@@ -121,15 +134,12 @@
  
  \section{Análise Comparativa}
  
- O artigo \cite{qian:08}, assim como \cite{wagan:10}, propõe um \textit{framework} de segurança. Ele é o único que tenta levantar todos os problemas de segurança em VANETs, com base na autenticação de aplicações disponíveis na rede. Ele   também é o único que leva em conta diferentes perfis de aplicações propostas para  VANETs. Apesar disso, ele não explica claramente como os componentes propostos de seu \textit{framework} endereçam cada um dos tipos de ataques identificados e como eles garantem os requirimentos de segurança em VANETs.
+ O artigo \cite{samara:10} foi o que mais atrelou sua solução a outra já existente, o uso de listas CRL. Ele consegue demonstrar que sua solução é melhor que a anterior até determinado ponto. Porém a taxa de atualização dos certificados propostos por ele não são melhor descritas. Elas deveriam ter sido mais detalhadas, já que a eficiência de sua solução é um dos pontos chave destacados por este autor.
  
- Ele identifica quais são as tecnologias necessárias para que o desenvolvimento de sua proposta possa ser realizado.     Porém nenhuma indicação de como isso seria implantado foi feita.
+ O artigo \cite{wagan:10} possui uma maior consideração sobre a implementação de seu \textit{framework} que \cite{samara:10}, já que ele considera qual será a tecnologia usada (\textit{chip} TDM), e como ela interage com outros componentes. Em \cite{samara:10} não é mencionado como seria possível a RSU sobrescrever diretamente os certificados de um veículo. Não há nenhuma consideração sobre uma possível negação desta ação. Ambos não fornecem simulações que comprovem a eficácia de suas idéias, apesar de haver comparações com outras soluções. 
  
- O artigo \cite{wagan:10} é mais objetivo que o mencionado anteriormente. Nele o problema de comunicação confiável entre um grupo é focado. A consideração sobre sua implementação também é feita, já que ele considera qual será a tecnologia usada, e como ela interage com outros componentes. Sua semelhança com \cite{liao:09} é que ambos comparam sua solução com outras alternativas, eles descrevem a vantagem de sua idéia em relação a outras. A diferença é que não são fornecidas  simulações que comprovem a eficácia de uma possível implementação.
+ O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois  identifica o problema, mostra alternativas, e é o único a apresentar resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabilísta proposta, uma falha pode ser considerada inaceitável em determinados cenários.
  
- O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois  identifica o problema, mostra alternativas, e apresenta resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabílista proposta, uma falha pode ser considerada inaceitável em determinados cenários.
- 
-
 
 
 \bibliographystyle{sbc}
