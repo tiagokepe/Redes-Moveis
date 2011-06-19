@@ -94,7 +94,7 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 				it->nodeId_ = dsch->src();
 				it->fromRequester_ = true;
 
-				pending_confirmations_.insert(*it);
+				pending_confirmations_.push_back(*it);
 
 				neigh_[ngh_index].gnt_out_+= frame_range * mac_->slots2bytes(ngh_index, it->range_, false);
 
@@ -140,7 +140,7 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 				WimshMshDsch::AvlIE avl;
 
 				avl = createAvl(*it,WimshMshDsch::RX_ONLY);
-				availabilities_.insert(avl);
+				availabilities_.push_back(avl);
 			}
 			else if ( mac_->topology()->neighbors(it->nodeId_,mac_->nodeId()) ) // Confirmação
 			{
@@ -189,31 +189,165 @@ void WimshBwManagerFeba::recvAvl(WimshMshDsch* dsch){
 void WimshBwManagerFeba::schedule (WimshMshDsch* dsch){
 
 	//  Encaixar as disponibilidades
-	// availabilities(dsch);
+	 availabilities(dsch);
 
 	// Confirmar concessões
-	// confirm(dsch);
+	confirm(dsch);
 
 	// Concessões extras para requisições que não puderam ser atendidas.
 	//regrant(dsch);
 
 	// Varre a lista de ativos para tratar requisições e concessões.
-	//requestAndGrant(dsch);
-
+	requestAndGrant(dsch);
 
 }
 
+
+
+void WimshBwManagerFeba::availabilities(WimshMshDsch* dsch) {
+
+
+	// Adicione o maior número de disponibilidades possíveis
+	while ( ! availabilities_.empty() ) {
+
+		// Se não há mais espaço, paramos
+		if ( dsch->remaining() < WimshMshDsch::AvlIE::size() ) break;
+
+		WimshMshDsch::AvlIE avl = availabilities_.front();
+		availabilities_.pop_front();
+
+		// Incluimos a disponibilidade na mensagem, a não ser que esta informação não seja mais válida.
+		// Corresponda a um frame que não exite mais.
+		if ( mac_->frame() <=
+				avl.frame_ + WimshMshDsch::pers2frames (avl.persistence_) ) {
+			dsch->add (avl);
+		}
+	}
+}
+
+void WimshBwManagerFeba::confirm (WimshMshDsch * dsch  ){
+
+	// Devemos confirmar o maior numero possível de concessões
+	while( !pending_confirmations_.empty() ) {
+
+		// Se não há mais espaço na mensagem, terminamos
+		if ( dsch->remaining() < WimshMshDsch::GntIE::size() ) break;
+
+
+		WimshMshDsch::GntIE gnt;
+
+
+		// Número de bytes confirmados
+		unsigned int confirmed = 0;
+
+		gnt = pending_confirmations_.front();
+		pending_confirmations_.pop_front();
+
+		unsigned int frame_start;
+		unsigned int frame_range;
+
+		realPersistence(gnt.frame_,gnt.persistence_,frame_start, frame_range);
+
+		unsigned int ngh_index = mac_->neigh2ndx(gnt.nodeId_);
+
+
+		while ( dsch->remaining() >= WimshMshDsch::GntIE::size() ) {
+
+			confFit(frame_start, frame_range, gnt.start_, gnt.range_, gnt);
+
+
+			// Se não há mais bytes a serem confirmados, termine
+			if ( gnt.range_ == 0 )
+				break;
+
+			dsch->add(gnt);
+
+			unsigned int actual_frame_start;
+			unsigned int actual_frame_range;
+
+			realPersistence(gnt.frame_,gnt.persistence_,actual_frame_start,actual_frame_range);
+
+			// Computamos o valor dos bytes confirmados
+			confirmed += actual_frame_range * mac_->slots2bytes (ngh_index, gnt.range_, true);
+
+			// Marcamos as estruturas de dados. Para avisar onde transmitiremos.
+			setSlots(busy_,actual_frame_start,actual_frame_range,gnt.start_,gnt.range_,true);
+			setSlots (grants_, actual_frame_start, actual_frame_range, gnt.start_, gnt.range_, true);
+			setSlots (dst_, actual_frame_start, actual_frame_range, gnt.start_, gnt.range_, gnt.nodeId_);
+			setSlots (channel_, actual_frame_start, actual_frame_range, gnt.start_, gnt.range_, gnt.channel_);
+		}
+
+
+		neigh_[ngh_index].cnf_out_ += confirmed;
+		neigh_[ngh_index].cnf_out_ =	( neigh_[ngh_index].cnf_out_ < neigh_[ngh_index].gnt_out_ ) ?
+			neigh_[ngh_index].cnf_out_ : neigh_[ngh_index].gnt_out_;
+
+
+
+		// Se o número de requisições e menor que o de confirmações, a simulação é abortada.
+		if ( neigh_[ngh_index].req_out_ < neigh_[ngh_index].cnf_out_ ) abort();
+
+		// Os dados sobre os bytes desta confirmação são esquecidos.
+		neigh_[ngh_index].gnt_out_ -= neigh_[ngh_index].cnf_out_;
+		neigh_[ngh_index].req_out_ -= neigh_[ngh_index].cnf_out_;
+		neigh_[ngh_index].cnf_out_ = 0;
+
+
+
+	}
+
+}
+
+
+
+void WimshBwManagerFeba::confFit(unsigned int frame_start, unsigned int frame_range, unsigned int slot_start, unsigned int slot_range, WimshMshDsch::GntIE& gnt) {
+
+	// Para cada frame
+	for( unsigned int f = frame_start; f < frame_start + frame_range; f++) {
+		unsigned int actual_frame = f % HORIZON;
+
+		// Verificamos as impossibilidades de transmissão.
+		const std::bitset<MAX_SLOTS> map = busy_[actual_frame] | self_tx_unavl_[gnt.channel_][actual_frame];
+
+		// Para cada minislot
+		for ( unsigned int slot = slot_start; slot < slot_start + slot_range; slot++ ) {
+
+			if ( map[slot] == false ) {
+				gnt.frame_ = f;
+				gnt.start_ = slot;
+				gnt.persistence_ = WimshMshDsch::FRAME1;
+
+				// Procure o maior número de minislots
+				for ( ; slot < ( slot_start + slot_range ) && map[slot] == false ; slot++ ) { }
+
+				gnt.range_ = slot - gnt.start_;
+				return;
+			}
+		}
+	}
+
+	// Se chegamos até aqui, retornamos um grant vazio. Não é possível conceder mais nada.
+	gnt.range_ = 0;
+}
+
+
 void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
+
+	// Pego o tempo do meu handshake
+	unsigned int HSlf = handshake(mac_->nodeId());
 
 	// Enquanto a lista de conexões ainda estiver ativa, continue
 	while( !activeList_.empty() )
 	{
 		wimax::LinkDirection direction = activeList_.current().dir_;
+
 		unsigned int ngh_index = activeList_.current().ndx_;
 
 		// Se for um fluxo de entrada, eu devo conceder
 		// Ver grant(i) no artigo do FEBA
 		if( direction == wimax::IN ){
+
+			unsigned int HDst = handshake(mac_->ndx2neigh(ngh_index));
 
 			// Se a mensagem estiver cheia, eu não incluo mais grants
 			if ( dsch->remaining() > WimshMshDsch::GntIE::size()  )
@@ -231,7 +365,9 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 
 				WimshMshDsch::GntIE gnt;
 
-				//gnt = fit(ngh_index, initial horizon, limit horizon );
+				// Procuramos um espaço para nosso grant
+				// granted = fit(i, lag_i_in, h_neigh, h_neigh + h_self
+				gnt = fit(ngh_index, neigh_[ngh_index].lag_in_ ,mac_->frame() + HDst , mac_->frame() + 2*HDst + HSlf); //initial horizon, limit horizon );
 
 				/*
 				 * Se não achamos nenhum espaço no horizonte de alocação,
@@ -252,7 +388,7 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 				neigh_[ngh_index].lag_in_ = ( bytes_granted > neigh_[ngh_index].lag_in_ ) ? 0 : neigh_[ngh_index].lag_in_ - bytes_granted;
 
 				// Não podemos mais receber nenhuma transmissão neste canal
-				setSlots(busy_, gnt.frame_, frame_range, gnt.start_, gnt.range_, true)
+				setSlots(busy_, gnt.frame_, frame_range, gnt.start_, gnt.range_, true);
 			}
 
 			// if ( lag_i_in > lag_max ) terminate
@@ -263,7 +399,7 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 			 * Precisamos mover o ponteiro de nossa lista ativa,
 			 * há dois casos:
 			 * - As requisições já foram satisfeitas
-			 * - ainda não
+			 * - Round Robin.
 			 */
 
 			if ( neigh_[ngh_index].gnt_in_ >= neigh_[ngh_index].req_in_ )
@@ -275,13 +411,125 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 			{
 				activeList_.move();
 			}
-		} // Se for um fluxo de saída, eu devo requisitar
+		} // Se for um fluxo de saída, eu devo requisitar. wimax::OUT
 		else{
+
+			// Número de bytes a serem requisitados
+			unsigned int pending_bytes = ( neigh_[ngh_index].backlog_ > neigh_[ngh_index].req_out_ )? neigh_[ngh_index].backlog_ - neigh_[ngh_index].req_out_:0;
+
+			// Se não há espaço suficiente na mensagem, paramos
+			if ( dsch->remaining() < WimshMshDsch::ReqIE::size() )
+				break;
+
+			// lag_i_out = min{ lag_i_out + quantum, blog_i_out}
+			neigh_[ngh_index].lag_out_ += quantum(ngh_index,wimax::OUT);
+			neigh_[ngh_index].lag_out_ = ( neigh_[ngh_index].lag_out_ > pending_bytes )?pending_bytes: neigh_[ngh_index].lag_out_;
+
+			unsigned int ungranted = ( neigh_[ngh_index].req_out_ > neigh_[ngh_index].gnt_out_ )? neigh_[ngh_index].req_out_ - neigh_[ngh_index].gnt_out_ : 0;
+
+			// if ( req_i_out - cnf_i_out > pending_max )
+			// Aqui usamos gnt_i_out ao invés de cnf_i_out. As confirmações sempre são feitas posteriormente.
+			if (  ungranted > PENDING_MAX  ) {
+
+
+				// If (lag_i_out > lag_max) terminate
+				if ( neigh_[ngh_index].lag_out_ > LAG_MAX )
+					break;
+
+
+				// Movemos o ponteiro do Round Robin para o próximo elemento
+				activeList_.move();
+				continue;
+			}
+
+			if ( pending_bytes > 0) {
+				WimshMshDsch::ReqIE reqie;
+
+				reqie.nodeId_ = mac_->ndx2neigh(ngh_index);
+
+				// Adicionamos a requisição
+				unsigned int nslots = mac_->bytes2slots(ngh_index,neigh_[ngh_index].lag_out_,false);
+				WimshMshDsch::slots2level(mac_->phyMib()->slotPerFrame(), nslots ,reqie.level_,reqie.persistence_ );
+
+				dsch->add(reqie);
+
+				// Atualizamos o número de bytes requisitados
+				// req_i_out = req_i_out + needed
+				neigh_[ngh_index].req_out_ += neigh_[ngh_index].lag_out_;
+
+				// lag_i_out = 0
+				neigh_[ngh_index].lag_out_ = 0;
+
+				// O backlog só será atualizado após a mensagem ter sido enviada de fato.
+			}
+
+
+			if ( pending_bytes <= 0  )
+			{
+				activeList_.erase();
+			}
+			else
+			{
+				activeList_.move();
+			}
 
 
 		}
 
 	}
+}
+
+/*
+ * Encaixa um grant em um espaço livre no horizonte de tempo definido.
+ */
+WimshMshDsch::GntIE  WimshBwManagerFeba::fit( unsigned int ngh_index, unsigned int bytes, unsigned int min_frame, unsigned int max_frame) {
+
+
+	// Grant a ser retornado por esta função
+	WimshMshDsch::GntIE gnt;
+
+	gnt.nodeId_ = mac_->ndx2neigh(ngh_index);
+
+
+	// Número de slots por frame
+	unsigned int slots_frame = mac_->phyMib()->slotPerFrame();
+
+
+	// Para cada frame no horizonte
+	for(unsigned int f = min_frame; f<=max_frame ; f++)
+	{
+		// Colocamos o frame em valores reais
+		unsigned int actual_frame = f % HORIZON;
+
+		// Canal a ser usado
+		unsigned int channel;
+		channel = fitGnt.uniform((int) mac_->nchannels());
+
+		// Para cada canal
+		for(unsigned int c = 0; c < mac_->nchannels(); c++) {
+
+				// Marcamos os slots que não podemos conceder.
+				std::bitset<MAX_SLOTS> map = unconfirmedSlots_[actual_frame] |
+					busy_[actual_frame] | self_rx_unavl_[channel][actual_frame] |
+					neigh_tx_unavl_[ngh_index][channel][actual_frame];
+
+				for( unsigned int slot; slot < slots_frame ; slot++)
+				{
+					gnt.frame_ = f;
+					gnt.start_ = slot;
+					gnt.persistence_ = WimshMshDsch::FRAME1;
+					gnt.fromRequester_ = false;
+					gnt.channel_ = channel;
+
+				}
+				// Pulamos para o próximo canal.
+				channel = ( channel + 1 )%mac_->nchannels();
+		}
+	}
+
+	// Se chegamos até aqui não foi possível alocar banda.
+	gnt.range_ = 0;
+	return gnt;
 }
 
 void WimshBwManagerFeba::initialize (){
@@ -368,6 +616,11 @@ void WimshBwManagerFeba::backlog (WimaxNodeId nexthop, unsigned int bytes){
 }
 
 void WimshBwManagerFeba::sent (WimaxNodeId nexthop, unsigned int bytes){
+
+	const unsigned int ngh_index = mac_->ndx2neigh(nexthop);
+
+	// Atualizamos o backlog aqui ( ver requestAndgrant) .
+	neigh_[ngh_index].backlog_ -= bytes;
 }
 
 void WimshBwManagerFeba::realPersistence(unsigned int frame_start, WimshMshDsch::Persistence frame_range, unsigned int &actual_frame_start, unsigned int &actual_frame_range){
