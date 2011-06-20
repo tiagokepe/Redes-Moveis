@@ -7,6 +7,10 @@
 #include <wimsh_packet.h>
 #include <wimsh_mac.h>
 
+
+#include <rng.h>
+
+
 #define ROUND_DURATION 20
 #define LAG_MAX 50000
 #define PENDING_MAX 50000
@@ -61,6 +65,11 @@ protected:
 
 
 	};
+
+	bool deficitOverflow_;
+	bool ddTimer_;
+	bool ddTimeout_;
+
 	// Descritor geral de vizinhos.
 	std::vector< NeighbourDesc > neigh_;
 
@@ -128,6 +137,8 @@ private:
 	WimshMshDsch::AvlIE createAvl(WimshMshDsch::GntIE gnt,WimshMshDsch::Direction dir);
 	void confirm (WimshMshDsch * dsch );
 	void requestAndGrant(WimshMshDsch* dsch);
+	void requestGrant (WimshMshDsch* dsch);
+	WimshMshDsch::GntIE grantFit (unsigned int ndx, unsigned int bytes,unsigned int minFrame, unsigned int maxFrame);
 	WimshMshDsch::GntIE fit( unsigned int ngh_index, unsigned int bytes, unsigned int min_frame, unsigned int max_frame);
 	void confFit(unsigned int frame_start, unsigned int frame_range, unsigned int slot_start, unsigned int slot_range, WimshMshDsch::GntIE& gnt);
 	void availabilities(WimshMshDsch* dsch);

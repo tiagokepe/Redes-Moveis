@@ -666,6 +666,7 @@ WimshBwManagerFairRR::requestGrant (WimshMshDsch* dsch)
 
 				// get a new grant information element
 				WimshMshDsch::GntIE gnt;
+				cout << "bytes gnt:" << deficit << endl;
 
 				// grant up to 'deficit' bytes within the time horizon
 				gnt = grantFit (ndx,
