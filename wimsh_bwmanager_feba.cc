@@ -23,7 +23,7 @@ int WimshBwManagerFeba::command (int argc, const char*const* argv) {
 
 
 void WimshBwManagerFeba::recvMshDsch (WimshMshDsch* dsch){
-
+	cout << "gnt:" << dsch->gnt().size() << "req:" << dsch->req().size() << endl;
 	recvReq(dsch);
 	recvGnt(dsch);
 	recvAvl(dsch);
@@ -44,8 +44,12 @@ void WimshBwManagerFeba::recvReq(WimshMshDsch* dsch){
 		if( it->nodeId_ == mac_->nodeId()  )
 		{
 
-			 neigh_[ngh_index].req_in_+= WimshMshDsch::pers2frames(it->persistence_) * mac_->slots2bytes(ngh_index, it->level_, false);
+			// Indica ao weightManager que pode haver novo fluxo
+			wm_.flow (ngh_index, wimax::IN);
 
+
+			 neigh_[ngh_index].req_in_+= WimshMshDsch::pers2frames(it->persistence_) * mac_->slots2bytes(ngh_index, it->level_, false);
+		//	 cout << "Recebi" << endl;
 			 // Inserimos este vizinho na lista de conexões ativas,
 			 // caso ele ainda não esteja lá
 			 if (   neigh_[ngh_index].req_in_ > neigh_[ngh_index].gnt_in_ && !( activeList_.find(wimax::LinkId(ngh_index,wimax::IN)) )   )
@@ -65,16 +69,18 @@ void WimshBwManagerFeba::recvGnt(WimshMshDsch* dsch){
 	{
 		//Indice deste vizinho
 		unsigned int ngh_index = it->nodeId_;
+//		 cout << "gnt:" << it->nodeId_ << ","<< mac_->nodeId() << endl;
 
 		// Duração do frame
 		unsigned int frame_range;
 		unsigned int frame_start;
-		
+
 		realPersistence(it->frame_,it->persistence_,frame_start,frame_range);
 		
 		// Grant destinado a este nodo.
 		if(  it->nodeId_ == mac_->nodeId() )
 		{
+
 			// É uma confirmação
 			if ( it->fromRequester_ )
 			{
@@ -269,7 +275,6 @@ void WimshBwManagerFeba::confirm (WimshMshDsch * dsch  ){
 
 			// Computamos o valor dos bytes confirmados
 			confirmed += actual_frame_range * mac_->slots2bytes (ngh_index, gnt.range_, true);
-
 			// Marcamos as estruturas de dados. Para avisar onde transmitiremos.
 			setSlots(busy_,actual_frame_start,actual_frame_range,gnt.start_,gnt.range_,true);
 			setSlots (grants_, actual_frame_start, actual_frame_range, gnt.start_, gnt.range_, true);
@@ -336,21 +341,38 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 	// Pego o tempo do meu handshake
 	unsigned int HSlf = handshake(mac_->nodeId());
 
+
+	unsigned int reqIeOccupancy = 0;
+
+
+	std::vector<bool> neighReq (mac_->nneighs(), false);
+
+	// the i-th element stores the number of bytes requested to neighbor i
+	std::vector<unsigned int> neighReqBytes (mac_->nneighs(), 0);
+	unsigned int ngh_index = activeList_.current().ndx_;
+
+
+	std::vector<unsigned int> neighReqMax (mac_->nneighs());
+	for ( unsigned int i = 0 ; i < mac_->nneighs() ; i++ ) {
+		neighReqMax[i] =
+			  mac_->phyMib()->slotPerFrame()
+			* mac_->phyMib()->symPerSlot ()
+			* WimshMshDsch::pers2frames (WimshMshDsch::FRAME128)
+			* mac_->alpha (i);
+	}
+
 	// Enquanto a lista de conexões ainda estiver ativa, continue
 	while( !activeList_.empty() )
 	{
 		wimax::LinkDirection direction = activeList_.current().dir_;
 
-		unsigned int ngh_index = activeList_.current().ndx_;
-
 		// Se for um fluxo de entrada, eu devo conceder
 		// Ver grant(i) no artigo do FEBA
 		if( direction == wimax::IN ){
-
 			unsigned int HDst = handshake(mac_->ndx2neigh(ngh_index));
 
 			// Se a mensagem estiver cheia, eu não incluo mais grants
-			if ( dsch->remaining() > WimshMshDsch::GntIE::size()  )
+			if ( dsch->remaining() - reqIeOccupancy < WimshMshDsch::GntIE::size()  )
 				break;
 
 
@@ -359,9 +381,11 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 			neigh_[ngh_index].lag_in_+=quantum(ngh_index,wimax::IN);
 			neigh_[ngh_index].lag_in_= ( neigh_[ngh_index].lag_in_ > pending_bytes) ? pending_bytes : neigh_[ngh_index].lag_in_;
 
+			cout << "DDIN:" << neigh_[ngh_index].lag_in_ << endl;
 
 			// Adiciono grants de acordo com o DRR
-			while ( ( dsch->remaining() > WimshMshDsch::GntIE::size() ) && (neigh_[ngh_index].lag_in_ > 0 ) ){
+			while ( ( dsch->remaining() - reqIeOccupancy >= WimshMshDsch::GntIE::size() ) && (neigh_[ngh_index].lag_in_ > 0 ) ){
+				cout << "DDIN2" << endl;
 
 				WimshMshDsch::GntIE gnt;
 
@@ -413,7 +437,8 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 			}
 		} // Se for um fluxo de saída, eu devo requisitar. wimax::OUT
 		else{
-
+		//	cout << "DRROUT" << endl;
+/*
 			// Número de bytes a serem requisitados
 			unsigned int pending_bytes = ( neigh_[ngh_index].backlog_ > neigh_[ngh_index].req_out_ )? neigh_[ngh_index].backlog_ - neigh_[ngh_index].req_out_:0;
 
@@ -444,7 +469,6 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 
 			if ( pending_bytes > 0) {
 				WimshMshDsch::ReqIE reqie;
-
 				reqie.nodeId_ = mac_->ndx2neigh(ngh_index);
 
 				// Adicionamos a requisição
@@ -460,7 +484,7 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 				// lag_i_out = 0
 				neigh_[ngh_index].lag_out_ = 0;
 
-				// O backlog só será atualizado após a mensagem ter sido enviada de fato.
+				// O neigh_i.backlog só será atualizado após a mensagem ter sido enviada de fato.
 			}
 
 
@@ -471,11 +495,134 @@ void WimshBwManagerFeba::requestAndGrant(WimshMshDsch* dsch){
 			else
 			{
 				activeList_.move();
+			}*/
+			unsigned int& deficit   = neigh_[ngh_index].lag_out_;
+			unsigned int& backlog   = neigh_[ngh_index].backlog_;
+		//	unsigned int& confirmed = neigh_[ngh_index].cnf_out_;
+			unsigned int& requested = neigh_[ngh_index].req_out_;
+			unsigned int& granted   = neigh_[ngh_index].gnt_out_;
+
+
+
+			// number of pending bytes (ie. backlogged but not requested)
+			unsigned int pending =
+				( backlog > requested ) ? ( backlog - requested ) : 0;
+
+			// number of ungranted bytes (ie. requested but not granted)
+			unsigned int ungranted =
+				( requested > granted ) ? ( requested - granted ) : 0;
+
+			// stop if there is not enough room in this MSH-DSCH to add a request
+			if ( dsch->remaining() - reqIeOccupancy < WimshMshDsch::ReqIE::size() )
+				break;                                                        // 2.
+
+			// update the deficit counter, unless we are resuming last round
+			deficit += quantum (ngh_index, wimax::OUT);
+
+
+			// the deficit counter is bounded by the maxDeficit_ value
+
+			// the deficit counter is bounded by the backlog
+			// deficit = ( deficit > backlog ) ? backlog : deficit;
+			deficit = ( deficit > pending ) ? pending : deficit;    // XXX
+
+			// if there is too much bandwidth pending, do not request anymore
+			// if ( maxBacklog_ > 0 && pending > maxBacklog_ ) {
+			if (  ungranted > PENDING_MAX ) {// XXX
+
+				// if the deadlock timer is enabled and deadlock is detected
+				// when we reset the deficit of the current descriptor
+				// and move it to the end of the active list
+
+				// if fairRequest_ is enabled and the deficit overflows
+				// the maximum allowed deficit, then we exit immediately from
+				// the request/grant process
+				if ( deficit > LAG_MAX )
+					break;
+
+				// move the round-robin pointer to the next element
+				activeList_.move();
+				continue;
+			}
+
+
+			// if we did not send a bandwidth request to this neighbor,
+			// increase the occupancy of request IEs
+			if ( neighReq[ngh_index] == false )
+				reqIeOccupancy += WimshMshDsch::ReqIE::size();
+
+			// in any case, we are now sending a bandwidth request to it
+			neighReq[ngh_index] = true;
+
+			// update the number of bytes that we are requesting
+			neighReqBytes[ngh_index] += deficit;
+
+			// the only purpose of the loop below is to add request IE
+			// for bandwidth requests that overflow the maximum amount
+			// of bytes that can be requested in a single request IE
+
+			while ( neighReqBytes[ngh_index] > neighReqMax[ngh_index] ) {
+
+				// create a request IE and
+				// fill the level and persistence fields of the request IE
+				// with the maximum amount that can be requested
+				WimshMshDsch::ReqIE ie;
+				ie.nodeId_ = mac_->ndx2neigh (ngh_index);
+				ie.level_ = WimshMshDsch::FRAME128;
+
+				// update the number of bytes still to be requested
+				neighReqBytes[ngh_index] -= neighReqMax[ngh_index];
+
+				// insert the IE into the MSH-DSCH message
+				dsch->add (ie);
+			}
+
+			// update the requested counter
+			requested += deficit;
+			Stat::put ("wimsh_req_out", mac_->index(), deficit);
+
+			// update the backlog value
+			// backlog = ( backlog > deficit ) ? ( backlog - deficit ) : 0;
+
+			// reset the deficit counter
+			deficit = 0;
+
+			// if there are no pending requests, remove the node
+			// from the active list
+			if ( pending == 0 ) {    // XXX
+			// if ( backlog == 0 ) {
+				// confirmed = requested = granted = 0; // XXX
+				activeList_.erase();
+
+			// otherwise, move the active list pointer to the next element
+			} else {
+				activeList_.move();
 			}
 
 
 		}
 
+	}
+
+	for ( unsigned int ngh_index = 0 ; ngh_index < mac_->nneighs() ; ngh_index++ ) {
+		if ( neighReqBytes[ngh_index] == 0 ) continue;
+
+		// create a request IE
+		WimshMshDsch::ReqIE ie;
+		ie.nodeId_ = mac_->ndx2neigh (ngh_index);
+
+		// fill the level and persistence fields of the request IE
+		// we are sure that the number of bytes never overflows the
+		// maximum number of bytes that can be requested in a single
+		// IE, since this case has been managed during the request/grant
+		// process itself
+		WimshMshDsch::slots2level (
+				mac_->phyMib()->slotPerFrame(),
+				mac_->bytes2slots (ngh_index, neighReqBytes[ngh_index], false),
+				ie.level_, ie.persistence_);
+
+		// insert the IE into the MSH-DSCH message
+		dsch->add (ie);
 	}
 }
 
@@ -533,7 +680,7 @@ WimshMshDsch::GntIE  WimshBwManagerFeba::fit( unsigned int ngh_index, unsigned i
 }
 
 void WimshBwManagerFeba::initialize (){
-	
+
 	int nneighbors = mac_->nneighs();
 	neigh_.resize(nneighbors);
 
@@ -581,6 +728,8 @@ void WimshBwManagerFeba::initialize (){
 		}
 	}
 
+	wm_.initialize();
+
 
 }
 /*
@@ -592,14 +741,14 @@ void WimshBwManagerFeba::backlog (WimaxNodeId src, WimaxNodeId dst, unsigned cha
 	const unsigned int ndx = mac_->neigh2ndx(nexthop);
 
 	// Adicionamos este fluxo ao pesador de fluxos
-	wm_.flow(src,dst,prio,ndx,wimax::IN);
+	wm_.flow(src,dst,prio,ndx,wimax::OUT);
 
 
 	neigh_[ndx].backlog_+=bytes;
 
 	// Este fluxo precisa ser adicionado se não existir, para que o alocador em Deficit Round Robin possa ser usado.
-	if (  !activeList_.find(wimax::LinkId(ndx, wimax::IN))  )
-		activeList_.insert(wimax::LinkId(ndx,wimax::IN));
+	if (  !activeList_.find(wimax::LinkId(ndx, wimax::OUT))  )
+		activeList_.insert(wimax::LinkId(ndx,wimax::OUT));
 }
 	
 void WimshBwManagerFeba::backlog (WimaxNodeId nexthop, unsigned int bytes){
@@ -607,12 +756,12 @@ void WimshBwManagerFeba::backlog (WimaxNodeId nexthop, unsigned int bytes){
 	// Índice do meu vizinho
 	const unsigned int ndx = mac_->neigh2ndx(nexthop);
 
-	wm_.flow(ndx, wimax::IN);
+	wm_.flow(ndx, wimax::OUT);
 
 	neigh_[ndx].backlog_+=bytes;
 
-	if (  !activeList_.find(wimax::LinkId(ndx, wimax::IN))  )
-		activeList_.insert(wimax::LinkId(ndx,wimax::IN));
+	if (  !activeList_.find(wimax::LinkId(ndx, wimax::OUT))  )
+		activeList_.insert(wimax::LinkId(ndx,wimax::OUT));
 }
 
 void WimshBwManagerFeba::sent (WimaxNodeId nexthop, unsigned int bytes){

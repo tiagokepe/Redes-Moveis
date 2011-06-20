@@ -26,6 +26,9 @@
 #include <random.h>
 #include <stat.h>
 
+#include <iostream>
+using namespace std;
+
 WimshBwManagerFairRR::WimshBwManagerFairRR (WimshMac* m) :
 	WimshBwManager (m), wm_ (m)
 {
@@ -223,6 +226,7 @@ WimshBwManagerFairRR::recvMshDsch (WimshMshDsch* dsch)
 {
 	if ( WimaxDebug::trace("WBWM::recvMshDsch") ) fprintf (stderr,
 			"%.9f WBWM::recvMshDsch[%d]\n", NOW, mac_->nodeId());
+	cout << "gnt:" << dsch->gnt().size() << "req:" << dsch->req().size() << endl;
 
 	rcvGrants(dsch);
 	rcvAvailabilities(dsch);
