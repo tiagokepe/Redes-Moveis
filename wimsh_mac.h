@@ -464,19 +464,7 @@ public:
 	//! Return the index for statistical purposes.
 	unsigned int index () { return index_; }
 
-	//! Returns the maximum number of bytes that can be requested to neighbor ndx in a single IE
-	unsigned int maxReq(unsigned int ndx) {
-			return 	phyMib()->slotPerFrame()
-					* phyMib()->symPerSlot ()
-					* WimshMshDsch::pers2frames (WimshMshDsch::FRAME128)
-					* alpha (ndx);
-	}
 
-	//! Get the interval between two consecutive control opportunities in frames.
-		unsigned int handshake (WimaxNodeId x) {
-			return (unsigned int) ceil (
-					  (fabs ( h (x)  - phyMib()->controlDuration() ))
-					/ phyMib()->frameDuration()); }
 
 protected:
 	//! Tcl interface.

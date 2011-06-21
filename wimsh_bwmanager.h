@@ -120,6 +120,19 @@ public:
 	//! Tcl interface from the MAC layer.
 	virtual int command (int argc, const char*const* argv) = 0;
 
+	//! Returns the maximum number of bytes that can be requested to neighbor ndx in a single IE
+	unsigned int maxReq(unsigned int ndx) {
+			return 	mac_->phyMib()->slotPerFrame()
+					* mac_->phyMib()->symPerSlot ()
+					* WimshMshDsch::pers2frames(WimshMshDsch::FRAME128)
+					* mac_->alpha (ndx);
+	}
+
+	//! Get the interval between two consecutive control opportunities in frames.
+		unsigned int handshake (WimaxNodeId x) {
+			return (unsigned int) ceil (
+					  (fabs ( mac_->h (x)  - mac_->phyMib()->controlDuration() ))
+					/ mac_->phyMib()->frameDuration()); }
 protected:
 	//! Invalidate any data structure of frame F (modulo HORIZON).
 	/*!

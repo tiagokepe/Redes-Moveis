@@ -16,7 +16,6 @@ WimshBwManagerFeba::WimshBwManagerFeba (WimshMac* m) :
 
 	regrantOffset_         = 1;
 	regrantDuration_       = 1;
-	avlAdvertise_          = true;
 	regrantEnabled_        = true;
 	fairGrant_             = true;
 	fairRequest_           = true;
@@ -36,16 +35,8 @@ int
 WimshBwManagerFeba::command (int argc, const char*const* argv)
 {
 	if ( argc == 2 && strcmp (argv[0], "availabilities") == 0 ) {
-		if ( strcmp (argv[1], "on") == 0 ) {
-			avlAdvertise_ = true;
-		} else if ( strcmp (argv[1], "off") == 0 ) {
-			avlAdvertise_ = false;
-		} else {
-			fprintf (stderr, "invalid availabilities '%s' command. "
-					"Choose either 'on' or 'off'", argv[1]);
-			return TCL_ERROR;
-		}
-      return TCL_OK;
+
+		return TCL_OK;
 	} else if ( argc == 2 && strcmp (argv[0], "regrant") == 0 ) {
 		if ( strcmp (argv[1], "on") == 0 ) {
 			regrantEnabled_ = true;
@@ -56,7 +47,7 @@ WimshBwManagerFeba::command (int argc, const char*const* argv)
 					"Choose either 'on' or 'off'", argv[1]);
 			return TCL_ERROR;
 		}
-      return TCL_OK;
+		return TCL_OK;
 	} else if ( argc == 2 && strcmp (argv[0], "regrant-same-horizon") == 0 ) {
 		if ( strcmp (argv[1], "on") == 0 ) {
 			sameRegrantHorizon_ = true;
@@ -67,7 +58,7 @@ WimshBwManagerFeba::command (int argc, const char*const* argv)
 					"Choose either 'on' or 'off'", argv[1]);
 			return TCL_ERROR;
 		}
-      return TCL_OK;
+		return TCL_OK;
 	} else if ( argc == 2 && strcmp (argv[0], "regrant-offset") == 0 ) {
 		regrantOffset_ = (unsigned int) atoi (argv[1]);
 		return TCL_OK;
@@ -156,7 +147,6 @@ WimshBwManagerFeba::command (int argc, const char*const* argv)
 		return wm_.command (argc - 1, argv + 1);
 	}
 
-	return TCL_ERROR;
 }
 
 void WimshBwManagerFeba::initialize (){
@@ -452,7 +442,7 @@ void
 WimshBwManagerFeba::requestGrant (WimshMshDsch* dsch)
 {
 	// Usado para calcular o horizonte de concessão de banda.
-	unsigned int Hslf = mac_->handshake(mac_->nodeId());
+	unsigned int Hslf = handshake(mac_->nodeId());
 
 
 	// número de bytes que serão requisitados em uma requisição
@@ -466,7 +456,7 @@ WimshBwManagerFeba::requestGrant (WimshMshDsch* dsch)
 	// Guardamos o número máximo de bytes que podem ser requeridos a um vizinho
 	std::vector<unsigned int> neighReqMax (mac_->nneighs());
 	for ( unsigned int i = 0 ; i < mac_->nneighs() ; i++ ) {
-		neighReqMax[i] = mac_->maxReq(i);
+		neighReqMax[i] = maxReq(i);
 	}
 
 
@@ -498,7 +488,7 @@ WimshBwManagerFeba::requestGrant (WimshMshDsch* dsch)
 			if ( dsch->remaining() - reqIeOccupancy < WimshMshDsch::GntIE::size() )
 				break;
 
-			unsigned int Hdst = mac_->handshake (dst);
+			unsigned int Hdst = handshake (dst);
 
 			unsigned int& deficit   = neigh_[ndx].def_in_;
 			unsigned int& granted   = neigh_[ndx].gnt_in_;
