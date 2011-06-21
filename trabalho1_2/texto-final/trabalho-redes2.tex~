@@ -24,11 +24,11 @@
 \maketitle
 
 \begin{abstract}
-	This assignment summarizes the following papers:\cite{qian:08}, \cite{liao:09} e \cite{wagan:10}. We also did a comparative analysis of them.
+	This assignment summarizes three papers that propose solutions for distinct security problems in VANEts. It was also done a comparative analysis of them.
 \end{abstract}
      
 \begin{resumo} 
-	Este trabalho resume os seguintes artigos que tratam sobre segurança em VANETs: \cite{qian:08}, \cite{liao:09} e \cite{wagan:10}. Também foi feita uma análise comparativa entre eles.
+	Este trabalho resume três trabalhos que propõe soluções para \\problemas de segurança em VANETs distintos. Também foi feita uma análise \\comparativa entre eles.
 \end{resumo}
 
 \section{Introdução}
@@ -36,7 +36,7 @@
   
   Segurança em comunicação é um assunto que atraiu muitas pesquisas em VANETs. Ainda há um número de problemas a serem resolvidos antes que as VANETS possam ser implementadas. Cada artigo aqui apresentado cobre um problema distinto.
   
-  Em \cite{samara:10} o foco do artigo está em cuidar com segurança e operações em certificados. Os certificados são usados para distinguir atacantes na rede. No artigo \cite{wagan:10} o objetivo é garantir confiança na comunicação entre nodos vizinhos, para que seja formado um grupo no qual há a necessidade de comunicação rápida e segura. Finalmente, em \cite{liao:09} o problema do rastreamento de um veículo é estudado. Em VANETs isto é possível através da captura de mensagens em \textit{broadcast} sobre o estado de cada veículo, as quais são necessárias. Para resolver este problema ele apresenta uma solução baseada na troca de pseudônimos na rede
+  Em \cite{samara:10} o foco do artigo está em cuidar com segurança e operações em certificados. Os certificados são usados para distinguir atacantes na rede. No artigo \cite{wagan:10} o objetivo é garantir confiança na comunicação entre nodos vizinhos, para que seja formado um grupo no qual há a necessidade de comunicação rápida e segura. Finalmente, em \cite{liao:09} o problema do rastreamento de um veículo é estudado. Em VANETs isto é possível através da captura de mensagens em \textit{broadcast} sobre o estado de cada veículo, as quais são necessárias. Para resolver este problema ele apresenta uma solução baseada na troca de pseudônimos na rede.
   
 
 \section{Resumos}
@@ -65,7 +65,7 @@
    \item \textbf{Pseudônimo}.
   \end{itemize}
   
-  Cada veículo em uma VANET já possui um certificado de identificação próprio. Ele expira a cada 10 minutos e garante a identidade do transmissor. O uso do VC tem como objetivo garantir a intenção do transmissor. Em uma transmissão, um veículo enviará seu certificado de identificação, juntamente com um VC ou um AC, ambos criptografados. Quando um nodo recebe esta transmissão, ele descriptografa a mensagem e se um VC foi enviado. Se ele for encontrado, a mensagem é aceita. Se um AC for encontrado, a mensagem é ignorada e os nodos vizinhos são alertados sobre a presença do atacante. Este alerta contém os seguintes campos:
+  Cada veículo em uma VANET já possui um certificado de identificação próprio. Ele expira a cada 10 minutos e garante a identidade do transmissor. O uso do VC tem como objetivo garantir a intenção do transmissor. Em uma transmissão, um veículo enviará seu certificado de identificação, juntamente com um VC ou um AC, ambos criptografados. Quando um nodo recebe esta transmissão, ele descriptografa a mensagem e verifica se um VC foi enviado. Se ele for encontrado, a mensagem é aceita. Se um AC for encontrado, a mensagem é ignorada e os nodos vizinhos são alertados sobre a presença do atacante. Este alerta contém os seguintes campos:
   
   \begin{itemize}
    \item \textbf{Identificação do nodo que fez o alerta};
@@ -77,14 +77,14 @@
   
   Cada alerta é colocado em uma lista, chamada Lista de Atacantes (AL). Esta lista contém no máximo $10$ entradas, ela mantém apenas os atacantes mais recentemente identificados. O uso desta lista é idêntico ao uso da CRL. A diferença é que se um transmissor não for identificado nesta lista, sua mensagem não será aceita automaticamente. Antes será executado o processo de identificação de certificado AC ou VC, o qual foi mencionado anteriormente no texto. 
   
-  A AL possui duas vantagens claras em relação a CRL. Primeiramente ela é uma lista interna, então ela não precisa ser retransmitida periodicamente. Em segundo lugar, ela não é tão grande, pois só são mantidas informações em relação a nodos vizinhos, e não toda a rede. Isto torna a busca e armazenamento mais fáceis. O uso desses certificados e da AL eliminarão a necessidade da CRL. 
+  A AL possui duas vantagens claras em relação a CRL. Primeiramente ela é uma lista interna, então ela não precisa ser retransmitida periodicamente. Em segundo lugar, ela não é tão grande, pois só são mantidas informações em relação a nodos vizinhos, e não de toda a rede. Isto torna a busca e armazenamento mais fáceis. O uso desses certificados e da AL eliminarão a necessidade da CRL. 
   
   A partir da da idéia de certificados proposta, este artigo propõe um protocolo para a revogação de certificados, chamado de Protocolo do Adversário Válido (VAP). Este protocolo consiste na execução dos seguintes passos:
   
   \begin{enumerate}
-   \item \textbf{Suspeita}: A maneira que um veículo levanta suspeitas acerca de outro está fora do escopo deste trabalho. Porém consideremos o caso em que todos os vizinhos de um nodo possuem VCs e enviam mensagens com a mesma informação, exceto um deles, o qual envia informação contraditória. Se esta informação persistir, uma acusação é feita a RSU;
+   \item \textbf{Suspeita}: A maneira que um veículo levanta suspeitas acerca de outro está fora do escopo deste trabalho. Porém foi considerado o caso em que todos os vizinhos de um nodo possuem VCs e enviam mensagens com a mesma informação, exceto um deles, o qual envia informação contraditória. Se esta informação persistir, uma acusação é feita a RSU;
    
-   \item \textbf{Acusação}: Se o número de acusações que uma RSU será comparado com um limite. Este limite é definido com base no número de veículos na rodovia. Se este limite for ultrapasSado, a RSU envia a acusação para uma Unidade Certificadora (CA);
+   \item \textbf{Acusação}: Se o número de acusações que uma RSU será comparado com um limite. Este limite é definido com base no número de veículos na rodovia. Se este limite for ultrapassado, a RSU envia a acusação para uma Unidade Certificadora (CA);
    
    \item A CA considerará este veículo como um atacante;
    
@@ -115,14 +115,14 @@
   
   O segundo componente mencionado neste trabalho é o grupo, que é simplesmente um conjunto de nodos. Em VANETs grupos podem ser formados de várias maneiras. Um método bastante usado é dividir geograficamente uma rodovia em segmentos, também conhecidos como células. Outras técnicas de agrupamento também são possíveis. A formação de um grupo está fora do escopo deste trabalho. Apenas reconhecemos que um grupo é um conjunto de nodos próximos. Nós nos preocupamos aqui com o comportamento dos componentes de um grupo. Um grupo consiste de um líder (GL), membros (GMs) e uma certa área geográfica de tamanho fixo. A seleção de um líder pode ser feita de diferentes maneiras, baseadas na posição posição geográfica. Foi considerado   que cada membro do grupo possui o componente de \textit{hardware}.
   
-  Na comunicação de grupo, o GL gera uma chave simétrica usando o módulo simétrico do TDM e distribui através de uma conexão assimétrica. Cada novo GL gera uma nova chave a ser distribuída. Nesta comunicação há dois tipos de mensagens que são considerados. O primeiro são as mensagens periódicas sobre o estado de um veículo. Estas mensagens serão transmitidas através do método de criptografia assimétrico. O segundo tipo são as mensagens baseadas em eventos. Elas serão transmitidas através do método simétrico, espera-se que com isto o tempo de resposta seja melhorado. Cada chave simétrica é única para determinado evento. Em trabalhos futuros, esperamos poder simular testes para validar o \textit{framework} proposto.
+  Na comunicação de grupo, o GL gera uma chave simétrica usando o módulo simétrico do TDM e distribui através de uma conexão assimétrica. Cada novo GL gera uma nova chave a ser distribuída. Nesta comunicação há dois tipos de mensagens que são considerados. O primeiro são as mensagens periódicas sobre o estado de um veículo. Estas mensagens serão transmitidas através do método de criptografia assimétrico. O segundo tipo são as mensagens baseadas em eventos. Elas serão transmitidas através do método simétrico, espera-se que com isto o tempo de resposta seja melhorado. Cada chave simétrica é única para determinado evento. Em trabalhos futuros, é esperado simular testes para validar o \textit{framework} proposto.
   
 
  \subsection{\cite{liao:09}}
  
- Infelizmente informações em \textit{broadcast} periódicas sobre o estado do veículo podem ser usadas para o rastreamento de usuários de veículos. Muitos estudos propõe uma mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de atacantes globais. Veículos podem ser distinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
+ Infelizmente informações em \textit{broadcast} periódicas sobre o estado do veículo podem ser usadas para o rastreamento de usuários de veículos. Muitos estudos propõe uma \\mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de atacantes globais. Veículos podem ser distinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
  
- O estado de um veículo $i$ é definido como $\{P_{i},V_{i},D_{i}\}$, que representa a posição, velocidade e direção de um veículo, respectivamente. A definição do modelo de risco proposto é a seguinte: quando um veículo $i$ altera seu  pseudônimo, se pelo menos $n (n \geq 1)$ veículos com estado similar ao veículo $i$ alterarem seu pseudônimo  no mesmo tempo, a mudança é bem-sucedida e o ataque falha, caso contrário a mudança falha. Como as mensagens de localização transmitidas por \textit{broadcast} periodicamente juntamente com nosso pseudônimo, uma mudança dessincronizada pode levar ao rastreamento do veículo por um atacante.
+ O estado de um veículo $i$ é definido como $\{P_{i},V_{i},D_{i}\}$, que representa a posição, velocidade e direção de um veículo, respectivamente. A definição do modelo de risco proposto é a seguinte: quando um veículo $i$ altera seu  pseudônimo, se pelo menos $n$ $(n \geq 1)$ veículos com estado similar ao veículo $i$ alterarem seu pseudônimo  no mesmo tempo, a mudança é bem-sucedida e o ataque falha, caso contrário a mudança falha. Como as mensagens de localização transmitidas por \textit{broadcast} periodicamente juntamente com nosso pseudônimo, uma mudança dessincronizada pode levar ao rastreamento do veículo por um atacante.
  
  Foi proposto um algoritmo chamado algoritmo de mudança síncrona de pseudônimos. A proposta é garantir que com uma alta  probabilidade pelo menos dois veículos com estado similar alterem simultaneamente seus pseudônimos.
  
@@ -134,11 +134,11 @@
  
  \section{Análise Comparativa}
  
- O artigo \cite{samara:10} foi o que mais atrelou sua solução a uma já existente, o uso de listas CRL. Ele 
+ O artigo \cite{samara:10} foi o que mais atrelou sua solução a outra já existente, o uso de listas CRL. Ele consegue demonstrar que sua solução é melhor que a anterior até determinado ponto. Porém a taxa de atualização dos certificados propostos por ele não são melhor descritas. Elas deveriam ter sido mais detalhadas, já que a eficiência de sua solução é um dos pontos chave destacados por este autor.
  
- O artigo \cite{wagan:10} possui uma maior consideração sobre a implementação de seu \textit{framework} que \cite{samara:10}, já que ele considera qual será a tecnologia usada (\textit{chip} TDM), e como ela interage com outros componentes. Em \cite{samara:10} não é mencionado como seria possível a RSU sobrescrever diretamente os certificados de um veículo. Não há nenhuma consideração sobre uma possível negação desta ação. Ambos não fornecem simulações que comprovem a eficácia de suas idéias, apesar de haver comparações com outras soluções. Isto torna difícil aceitar os seus benefícios.
+ O artigo \cite{wagan:10} possui uma maior consideração sobre a implementação de seu \textit{framework} que \cite{samara:10}, já que ele considera qual será a tecnologia usada (\textit{chip} TDM), e como ela interage com outros componentes. Em \cite{samara:10} não é mencionado como seria possível a RSU sobrescrever diretamente os certificados de um veículo. Não há nenhuma consideração sobre uma possível negação desta ação. Ambos não fornecem simulações que comprovem a eficácia de suas idéias, apesar de haver comparações com outras soluções. 
  
- O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois  identifica o problema, mostra alternativas, e é o único a apresentar resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabilísta proposta, uma falha pode ser considerada inaceitável em determinados cenários.
+ O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois  identifica o problema, mostra alternativas, e é o único a apresentar resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabilística proposta, uma falha pode ser considerada inaceitável em determinados cenários.
  
 
 

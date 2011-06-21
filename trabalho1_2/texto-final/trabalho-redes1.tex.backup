@@ -1,0 +1,87 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+
+\usepackage{graphicx,url}
+
+%\usepackage[brazil]{babel}   
+\usepackage[latin1]{inputenc}  
+
+     
+\sloppy
+
+\title{Implementação de um gerenciador de largura de banda \\
+	Primeiro trabalho de Redes Móveis}
+
+\author{Antonio Carlos S. Furtado Jr.\inst{1}, Tiago R. Kepe\inst{1} }
+
+
+\address{Departamento de Informática -- Universidade Federal do Paraná
+  (UFPR)\\
+}
+
+\begin{document} 
+
+\maketitle
+
+\begin{abstract}
+	This assignment describes and show results of a bandwith manager implementation.
+\end{abstract}
+     
+\begin{resumo} 
+	Este trabalho descreve e mostra resultados de uma implementação de um gerenciador de banda de rede
+\end{resumo}
+
+\section{Introdução}
+  O objetivo do nosso trabalho é implementar o protocolo para gerenciamento de largura de banda proposto em \cite{cic}. O gerenciador proposto neste artigo visa melhorar a justiça de uso de banda entre nodos de uma rede. Ele foi desenvolvido para funcionar em redes IEEE 802.16, em modo \textit{mesh}. Ele é baseado no algoritmo de escalonamento \textit{Deficit Round Robin} (DRR).
+  
+\section{Implementação}
+  Realizamos nossa implementação sobre o simulador Ns2 \cite{ns-2}. Como este não possui um módulo \textit{mesh} para o padrão IEEE 802.16, utilizamos um \textit{plug-in} que o implementa. 
+  
+  Nosso trabalho consistiu em criar uma classe que implementa o módulo do gerenciador de largura de banda, ele estende a classe \textit{WimshBwManager}, a qual descreve um gerenciador de banda genérico usado na Camada de Controle de acesso ao Meio (MAC). Esta classe abstrata define os métodos que são usados como interface de comunicação com outros módulos relacionados.Nosso gerenciador realiza basicamente as seguintes operações:
+  
+  
+  \begin{itemize}
+   \item \textbf{Escalonar banda}: Ele realiza concessões e requisições de banda de acordo com \cite{cic}. Além disso nesta operação também são enviadas as indisponibilidades de cada nó e confirmadas concessões;
+   \item \textbf{Receber de mensagens de escalonamento}: A principal tarefa aqui é receber mensagens de escalonamento criadas por escalonadores de outros nodos. Aqui são atualizadas as estruturas de dados que indicam às funções do escalonador de banda. 
+   \item \textbf{\textit{Backlog}}: Ele é avisado sobre a necessidade enviar uma certa quantidade de \textit{bytes} a outro nodo da rede. Ele precisa atualizar informações que digam ao escalonador de banda que novas requisições precisam ser feitas;
+   \item \textbf{Receber alertas de envios e recebimentos de mensagens de outros nodos}: Nos serve para alertar sobre a possível existência de novos fluxos na rede, útil para o escalonador de banda.
+  \end{itemize}
+  
+  Não foi implementado em nosso trabalho o procedimento descrito em \cite{cic} conhecido chamado de \textit{regrant}. Ele visa compensar nodos que tiveram requisições não atendidas com concessões posteriores não solicitadas. Ele não é essencial para o funcionamento deste protocolo.
+  
+
+\subsection{Dados}
+  Entre as principais estruturas de dados utilizadas estão:
+  \begin{itemize}
+   \item \textbf{neighDesc}: Ela serve para guardar atributos de cada vizinho. Nosso gerenciador precisa saber quantos \textit{bytes} foram recebidos, concedidos e confirmados para cada um deles;
+   \item \textbf{activeList\_}: Como as concessões e as requisições são feitas de maneira circular, usamos uma lista circular para guardar cada um dos fluxos existentes; 
+  \end{itemize}
+
+
+\section{Resultados}
+  Realizamos uma simulação com $10$ nodos em uma topologia de corrente. Eles foram baseados em métricas geradas pelo \cite{ns-2} e coletadas por esta ferramenta. Através da página descritiva desta ferramenta, é possível conseguir a descrição das métricas. Em nossa simulação, cada nodo possui um fluxo ativo com o último nodo da corrente. 
+  
+  Este protocolo tenta garantir justiça na rede, ao passo em que precisa sacrificar seu tempo de entrega da mensagem. Decidimos então gerar gráficos desses dois dados. A escolha de nossa topologia e de nossos fluxos foi ideal pois conseguimos observar o atraso na entrega das mensagens a diferentes pulos de distância do destino, além de ver como a justiça é garantida. O atraso médio de entrega na rede foi conseguido através da métrica \textit{e2e\_owd\_a}. O cálculo da justiça é feito como em \cite{cic}, através da seguinte fórmula: 
+  $$
+    (\sum^{n}_{i=1} x_{i})^{2}/(n * \sum^{n}_{i=1} x_{i}^{2})
+  $$
+  Na qual $n$ denota o número de fluxos e $x_{i}$ a vazão do $i$-ésimo fluxo. A vazão pode ser conseguida através da métrica \textit{e2e\_tpt}.
+  
+  Informações importantes sobre os testes:
+  \begin{itemize}
+   \item \textbf{Tempo de simulação}: 20 segundos com 3 segundos de aquecimento;
+   \item \textbf{Número de canais utilizados}: 4.
+  \end{itemize}
+  
+  Para a simulação do atraso decidimos alterar o número de \textit{slots} disponíveis ao controle de escalonamento. Queremos ver seu comportamento quando o gerenciador possui um número diferente de oportunidades de enviar suas mensagens. O resultado foi o seguinte:
+  
+  
+  
+  
+
+
+\bibliographystyle{sbc}
+\bibliography{trabalho-redes1}
+
+\end{document}

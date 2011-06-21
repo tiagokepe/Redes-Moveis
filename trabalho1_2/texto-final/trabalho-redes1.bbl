@@ -1,0 +1,30 @@
+\begin{thebibliography}{}
+
+\bibitem[Akyildiz et~al. 2009]{wimax}
+Akyildiz, I.~F., Lenzini, L., and Cicconetti, C. (2009).
+\newblock Wimsh: a simple and efficient tool for simulating ieee 802.16
+  wireless mesh networks in ns-2.
+\newblock In {\em Proceedings of the 2nd International Conference on Simulation
+  Tools and Techniques}, Simutools '09, pages 7:1--7:10, ICST, Brussels,
+  Belgium, Belgium. ICST (Institute for Computer Sciences, Social-Informatics
+  and Telecommunications Engineering).
+
+\bibitem[Cicconetti et~al. 2009]{cic}
+Cicconetti, C., Akyildiz, I., and Lenzini, L. (2009).
+\newblock Feba: A bandwidth allocation algorithm for service differentiation in
+  ieee 802.16 mesh networks.
+\newblock {\em Networking, IEEE/ACM Transactions on}, 17(3):884 --897.
+
+\bibitem[McCanne and Floyd ]{ns-2}
+McCanne, S. and Floyd, S.
+\newblock ns {N}etwork {S}imulator.
+\newblock \url{http://www.isi.edu/nsnam/ns/}.
+
+\bibitem[Mingozzi et~al. 2006]{ns2measure}
+Mingozzi, E., Stea, G., and Cicconetti, C. (2006).
+\newblock An integrated framework for enabling effective data collection and
+  statistical analysis with ns-2.
+\newblock In {\em Proceeding from the 2006 workshop on ns-2: the IP network
+  simulator}, WNS2 '06, New York, NY, USA. ACM.
+
+\end{thebibliography}

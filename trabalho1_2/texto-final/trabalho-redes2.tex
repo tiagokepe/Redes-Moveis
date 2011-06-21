@@ -24,7 +24,7 @@
 \maketitle
 
 \begin{abstract}
-	This assignment summarizes three papers that propose solutions for distinct security problems in VANEts. It was also done comparative analysis of them.
+	This assignment summarizes three papers that propose solutions for distinct security problems in VANEts. It was also done a comparative analysis of them.
 \end{abstract}
      
 \begin{resumo} 
@@ -120,7 +120,7 @@
 
  \subsection{\cite{liao:09}}
  
- Infelizmente informações em \textit{broadcast} periódicas sobre o estado do veículo podem ser usadas para o rastreamento de usuários de veículos. Muitos estudos propõe uma \\mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de atacantes globais. Veículos podem ser distinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
+ Infelizmente informações em \textit{broadcast} periódicas sobre o estado do veículo podem ser usadas para o rastreamento de usuários de veículos. Muitos estudos propõe uma \\mudança freqüente de pseudônimos na rede, o que não é efetivo com a presença de a-tacantes globais. Veículos podem ser distinguidos pela diferença de estado mesmo com mudança de pseudônimos. Um atacante pode usar as informações de estado ou do tempo de mudança de pseudônimos para rastrear veículos. Simplesmente mudar pseudônimos em um tempo arbitrário ou em um estado arbitrário pode desperdiçar pseudônimos e recursos. O foco deste trabalho é aumentar a eficiência  na mudança de pseudônimos.
  
  O estado de um veículo $i$ é definido como $\{P_{i},V_{i},D_{i}\}$, que representa a posição, velocidade e direção de um veículo, respectivamente. A definição do modelo de risco proposto é a seguinte: quando um veículo $i$ altera seu  pseudônimo, se pelo menos $n$ $(n \geq 1)$ veículos com estado similar ao veículo $i$ alterarem seu pseudônimo  no mesmo tempo, a mudança é bem-sucedida e o ataque falha, caso contrário a mudança falha. Como as mensagens de localização transmitidas por \textit{broadcast} periodicamente juntamente com nosso pseudônimo, uma mudança dessincronizada pode levar ao rastreamento do veículo por um atacante.
  
@@ -138,7 +138,7 @@
  
  O artigo \cite{wagan:10} possui uma maior consideração sobre a implementação de seu \textit{framework} que \cite{samara:10}, já que ele considera qual será a tecnologia usada (\textit{chip} TDM), e como ela interage com outros componentes. Em \cite{samara:10} não é mencionado como seria possível a RSU sobrescrever diretamente os certificados de um veículo. Não há nenhuma consideração sobre uma possível negação desta ação. Ambos não fornecem simulações que comprovem a eficácia de suas idéias, apesar de haver comparações com outras soluções. 
  
- O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois  identifica o problema, mostra alternativas, e é o único a apresentar resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabilísta proposta, uma falha pode ser considerada inaceitável em determinados cenários.
+ O terceiro trabalho analisado foi \cite{liao:09}, ao contrário dos outros, ele propõe apenas um algoritmo. Ele endereça um problema específico, que é a troca de pseudônimos. Ele é o que melhor expõe a importância de sua solução, pois  identifica o problema, mostra alternativas, e é o único a apresentar resultados de uma simulação, na qual verifica-se que seu algoritmo realmente é superior. Assim como o último artigo citado, ele se preocupa com o desempenho de sua solução. A desvantagem dele é ser a única solução probabilística proposta, uma falha pode ser considerada inaceitável em determinados cenários.
  
 
 

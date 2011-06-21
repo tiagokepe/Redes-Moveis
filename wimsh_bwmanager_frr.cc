@@ -191,7 +191,7 @@ void
 WimshBwManagerFairRR::initialize ()
 {
 	const unsigned int neighbors = mac_->nneighs();
-	
+
 	// resize and clear the bw request/grant data structure
 	neigh_.resize (neighbors);
 

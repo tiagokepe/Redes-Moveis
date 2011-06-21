@@ -1,0 +1,42 @@
+@ARTICLE{cic,
+author={Cicconetti, C. and Akyildiz, I.F. and Lenzini, L.},
+journal={Networking, IEEE/ACM Transactions on}, title={FEBA: A Bandwidth Allocation Algorithm for Service Differentiation in IEEE 802.16 Mesh Networks},
+year={2009},
+month={june },
+volume={17},
+number={3},
+pages={884 -897},
+keywords={FEBA;IEEE 802.16 mesh networks;bandwidth allocation algorithm;differentiated service;fair end-to-end bandwidth allocation;medium access control layer;multiple channel mesh nodes;quality of service;round robin fashion;service differentiation;single radio mesh node;wireless mesh network;DiffServ networks;WiMax;access protocols;metropolitan area networks;quality of service;},
+doi={10.1109/TNET.2008.2005221},
+ISSN={1063-6692},}
+
+
+@misc{ns-2,
+  key = {Ns-2},
+  author = {Steven McCanne and Sally Floyd},
+  title = {ns {N}etwork {S}imulator},
+  opthowpublished = {},
+  optmonth = {},
+  optyear = {},
+  note = {\url{http://www.isi.edu/nsnam/ns/}}
+}
+
+
+@inproceedings{Cicconetti:2009:WSE:1537614.1537624,
+ author = {Akyildiz, Ian F. and Lenzini, Luciano and Cicconetti, Claudio},
+ title = {WiMsh: a simple and efficient tool for simulating IEEE 802.16 wireless mesh networks in ns-2},
+ booktitle = {Proceedings of the 2nd International Conference on Simulation Tools and Techniques},
+ series = {Simutools '09},
+ year = {2009},
+ isbn = {978-963-9799-45-5},
+ location = {Rome, Italy},
+ pages = {7:1--7:10},
+ articleno = {7},
+ numpages = {10},
+ url = {http://dx.doi.org/10.4108/ICST.SIMUTOOLS2009.5679},
+ doi = {http://dx.doi.org/10.4108/ICST.SIMUTOOLS2009.5679},
+ acmid = {1537624},
+ publisher = {ICST (Institute for Computer Sciences, Social-Informatics and Telecommunications Engineering)},
+ address = {ICST, Brussels, Belgium, Belgium},
+ keywords = {IEEE 802.16, network simulator 2, simulation, wireless mesh networks},
+} 
